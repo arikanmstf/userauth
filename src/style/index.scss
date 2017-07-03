@@ -1,8 +1,20 @@
+@import "common/grid.scss";
 @import "common/color.scss";
 @import "common/input.scss";
 
 body {
-  background-color: $bodyBackground;
+  background-color: $bodyBackgroundColor;
+}
+.main-container {
+  max-width: $containerMaxWidth;
+  margin: 0 auto;
+  padding: 10px 10px;
+  background-color: $containerBackgroundColor;
+
+  .login-component {
+    margin: 0 auto;
+    max-width: $containerItemMaxWidth;
+  }
 }
 .loadingBaseLayer {
   position: fixed;

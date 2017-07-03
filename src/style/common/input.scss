@@ -1,4 +1,4 @@
-.input-text {
+.input-text, .input-password {
   padding: 8px;
-  background-color: $inputBackground;
+  max-width: $containerItemMaxWidth;
 }

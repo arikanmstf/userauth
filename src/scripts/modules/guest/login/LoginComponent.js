@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import InputText from '../../../common/input/InputText';
+import InputPassword from '../../../common/input/InputPassword';
 
 class LoginComponent extends Component {
 
@@ -11,9 +12,14 @@ class LoginComponent extends Component {
 
     render () { // eslint-disable-line class-methods-use-this
         return (
-        <div>
+        <div className="login-component">
           <p>Login Please</p>
-          <InputText />
+          <InputText
+            placeholder="Example user name: admin"
+					/>
+          <InputPassword
+            placeholder="Example password: 123"
+					/>
         </div>
         );
     }
