@@ -1,10 +1,9 @@
 import React, { Component } from 'react'; // eslint-disable-line no-unused-vars
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { setOrGetToken } from './common/Helpers';
 
-import Storage from './common/Storage';
-
-const isLoggedIn = Storage.get('login_key');
+const isLoggedIn = setOrGetToken();
 
 class App extends Component {
 
