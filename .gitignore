@@ -1,0 +1,9 @@
+/node_modules
+/api
+/admin
+/dist/*
+npm-debug.log
+
+# IntelliJ
+*.iml
+/.idea
