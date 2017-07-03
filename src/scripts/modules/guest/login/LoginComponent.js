@@ -1,5 +1,6 @@
-import React, { Component } from 'react'; // eslint-disable-line no-unused-vars
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import InputText from '../../../common/input/InputText';
 
 class LoginComponent extends Component {
 
@@ -8,10 +9,11 @@ class LoginComponent extends Component {
         this.state = props;
     }
 
-    render () {
+    render () { // eslint-disable-line class-methods-use-this
         return (
         <div>
-          <h1>Login Please</h1>
+          <p>Login Please</p>
+          <InputText />
         </div>
         );
     }

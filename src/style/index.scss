@@ -1,3 +1,9 @@
+@import "common/color.scss";
+@import "common/input.scss";
+
+body {
+  background-color: $bodyBackground;
+}
 .loadingBaseLayer {
   position: fixed;
   top: 0;

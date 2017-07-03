@@ -11,7 +11,9 @@
         "new-cap" : ["error", {"capIsNewExceptions": ["Component"]}],
         "brace-style" : ["error", "stroustrup"],
         "no-console" : ["warn", { "allow": ["warn", "error", "info", "debug", "groupCollapsed", "groupEnd"] }],
-        "no-param-reassign" : ["off"]
+        "no-param-reassign" : ["off"],
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error"
     },
     "globals": {
         "angular": false,
@@ -27,5 +29,8 @@
         "afterEach": false,
         "expect": false,
         "$fixtures": true
-    }
+    },
+    "plugins": [
+      "react"
+    ]
 }

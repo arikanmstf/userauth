@@ -1,10 +1,10 @@
-import React from 'react'; // eslint-disable-line no-unused-vars
+import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux'; // eslint-disable-line no-unused-vars
+import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 
-import App from './app.jsx';  // eslint-disable-line no-unused-vars
+import App from './app.jsx';
 import reducers from './reducers/index';
 
 const document = window.document; // eslint-disable-line no-undef
