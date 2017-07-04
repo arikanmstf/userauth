@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { setOrGetToken } from './common/Helpers';
 import LoginContainer from './modules/guest/login/LoginContainer';
+import NotFoundComponent from './modules/notfound/NotFoundComponent';
 
 const isLoggedIn = false;
 const sessionToken = setOrGetToken(); // eslint-disable-line no-unused-vars
@@ -36,6 +37,7 @@ class App extends Component {
             <Router>
               <Switch>
                 <Route exact path="/" component={LoginContainer} />
+                <Route path="*" component={NotFoundComponent} />
               </Switch>
             </Router>
           </div>

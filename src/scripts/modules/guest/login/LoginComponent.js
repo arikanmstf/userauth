@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import InputText from '../../../common/input/InputText';
 import InputPassword from '../../../common/input/InputPassword';
@@ -27,7 +28,11 @@ class LoginComponent extends Component {
           <InputPassword
             placeholder="Example password: 123"
           />
-          <button onClick={() => this.submitLoginForm()}>Submit</button>
+          <button className="btn btn-primary btn-login" onClick={() => this.submitLoginForm()}>Submit</button>
+          <ul className="login-page-options">
+            <li><Link to="/guest/register">Register</Link></li>
+            <li><Link to="/guest/forgot">Forgot Password</Link></li>
+          </ul>
         </div>
         );
     }
