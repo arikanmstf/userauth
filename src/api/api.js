@@ -1,5 +1,13 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const CryptoJS = require('crypto-js');
+const jsonfile = require('jsonfile');
+
 const app = express();
+const TOKEN_PREFIX = 'hXDrV!a@aG$hH5$';
+const homedir = './src/api';
+const userlist = homedir + '/database/userlist.json';
+
 const portNumber = 3001;
 const url = {
   api: '/api',
@@ -15,12 +23,32 @@ const allowCrossDomain = function (req, res, next) {
 }
 
 app.use(allowCrossDomain);
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.post(url.api + url.membership + url.login, function (req, res) {
-  var response = {
-    username: 'admin',
-    login_token: 'sladkasldkasldkasldk'
+
+  const users = jsonfile.readFileSync(userlist);
+  const result = users.find(function(user) {
+    return user.username === req.body.username && user.password == req.body.password;
+  });
+
+  if (result) {
+    const randomString = Math.random() + new Date().getTime();
+    const hash = CryptoJS.SHA1(TOKEN_PREFIX + randomString).toString(CryptoJS.enc.Hex);
+    const response = {
+      error: false,
+      data: {
+        login_key: hash
+      }
+    }
+  } else {
+    const response = {
+      error: "User or password wrong"
+    }
   }
+
+
   res.send(response);
 })
 
