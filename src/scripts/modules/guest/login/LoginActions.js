@@ -9,6 +9,12 @@ export function resolvedSubmitLoginForm (response) {
         data: response.data.response
     };
 }
+export function errorSubmitLoginForm () {
+    return {
+        type: 'ERROR_SUBMIT_LOGIN_FORM',
+        data: true
+    };
+}
 
 export function submitLoginForm (form) {
     return (dispatch) => {
@@ -16,6 +22,7 @@ export function submitLoginForm (form) {
         axios.post(API.submitLoginForm, qs.stringify({
             ...form
         }))
-        .then(response => dispatch(resolvedSubmitLoginForm(response)));
+        .then(response => dispatch(resolvedSubmitLoginForm(response)))
+        .catch(error => dispatch(errorSubmitLoginForm()));
     };
 }

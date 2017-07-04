@@ -9,11 +9,12 @@ class LoginComponent extends Component {
     constructor (props) {
         super(props);
         this.state = props;
+        this.submitLoginForm = this.submitLoginForm.bind(this);
     }
     submitLoginForm () {
         const form = {
-            username: 'admin',
-            password: '123'
+            username: this.state.username,
+            password: this.state.password
         };
         this.props.submitLoginForm(form);
     }
@@ -23,9 +24,11 @@ class LoginComponent extends Component {
         <div className="login-component">
           <p>Login Please</p>
           <InputText
+            onChange={(e) => this.setState({ username: e })}
             placeholder="Example user name: admin"
           />
           <InputPassword
+            onChange={(e) => this.setState({ password: e })}
             placeholder="Example password: 123"
           />
           <button className="btn btn-primary btn-login" onClick={() => this.submitLoginForm()}>Submit</button>

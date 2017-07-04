@@ -42,14 +42,15 @@ app.post(url.api + url.membership + url.login, function (req, res) {
         login_key: hash
       }
     }
+    res.send(response);
+
   } else {
     const response = {
       error: "User or password wrong"
     }
+    res.status(400);
+    res.send(response);
   }
-
-
-  res.send(response);
 })
 
 app.listen(portNumber, function () {
