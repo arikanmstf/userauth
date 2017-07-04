@@ -4,6 +4,7 @@
   "description": "An example project to user authentication with node-express and react.",
   "main": "index.js",
   "scripts": {
+    "api": "node ./src/api/api.js",
     "clean": "rm -rf ./dist/*",
     "lint": "eslint --max-warnings 0 --ext .jsx,.js src/ ",
     "prod": "npm run lint && webpack-dev-server --env=prod",
@@ -44,6 +45,7 @@
     "axios": "^0.16.1",
     "babel-preset-stage-1": "^6.1.18",
     "crypto-js": "^3.1.9-1",
+    "express": "https://registry.npmjs.org/express/-/express-4.15.3.tgz",
     "prop-types": "^15.5.10",
     "qs": "^6.4.0",
     "react": "^15.6.1",
