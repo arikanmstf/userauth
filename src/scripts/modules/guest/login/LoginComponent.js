@@ -9,23 +9,32 @@ class LoginComponent extends Component {
         super(props);
         this.state = props;
     }
+    submitLoginForm () {
+        const form = {
+            username: 'admin',
+            password: '123'
+        }
+        this.props.submitLoginForm(form);
+    }
 
-    render () { // eslint-disable-line class-methods-use-this
+    render () {
         return (
         <div className="login-component">
           <p>Login Please</p>
           <InputText
             placeholder="Example user name: admin"
-					/>
+          />
           <InputPassword
             placeholder="Example password: 123"
-					/>
+          />
+					<button onClick={()=>this.submitLoginForm()}>Submit</button>
         </div>
         );
     }
 }
 LoginComponent.propTypes = {
-    someParam: PropTypes.object
+    submitLoginForm: PropTypes.func,
+    someParam: PropTypes.object,
 };
 
 export default LoginComponent;
