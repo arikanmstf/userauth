@@ -1,5 +1,7 @@
-const home = 'http://localhost:8080/';
+const home = 'http://localhost:8080';
+const membership = 'membership';
 
-export default {
-    someAction: home
+export const API = { // eslint-disable-line import/prefer-default-export
+    someAction: home,
+    submitLoginForm: `${home}/${membership}/login`
 };

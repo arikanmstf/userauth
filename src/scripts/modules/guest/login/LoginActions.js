@@ -1,4 +1,5 @@
 import axios from 'axios';
+import qs from 'qs';
 import { API } from '../../../common/Config';
 import startedRequest from '../../../common/actions/StartedRequest';
 
@@ -12,11 +13,9 @@ export function resolvedSubmitLoginForm (response) {
 export function submitLoginForm (form) {
     return (dispatch) => {
         dispatch(startedRequest());
-        axios.get(API.submitLoginForm, {
-            params: {
-                ...form
-            }
-        })
+        axios.post(API.submitLoginForm, qs.stringify({
+            ...form
+        }))
         .then(response => dispatch(resolvedSubmitLoginForm(response)));
     };
 }
