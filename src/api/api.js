@@ -26,6 +26,20 @@ app.use(allowCrossDomain);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+/**
+  /* Url: http://localhost:3001/api/membership/login
+  /* Method: POST
+  /* Request:
+    {
+      username: "admin" // Required
+      password: "123" // Required
+    }
+  /* Response:
+    {
+      error: false,
+      login_token: 88d96cf4866ed1f519f3a6d3b094f0d7d4fbd2f9
+    }
+**/
 app.post(url.api + url.membership + url.login, function (req, res) {
 
   const users = jsonfile.readFileSync(userlist);
@@ -35,12 +49,10 @@ app.post(url.api + url.membership + url.login, function (req, res) {
 
   if (result) {
     const randomString = Math.random() + new Date().getTime();
-    const hash = CryptoJS.SHA1(TOKEN_PREFIX + randomString).toString(CryptoJS.enc.Hex);
+    const hash = CryptoJS.SHA256(TOKEN_PREFIX + randomString).toString(CryptoJS.enc.Hex);
     const response = {
       error: false,
-      data: {
-        login_key: hash
-      }
+      login_token: hash
     }
     res.send(response);
 

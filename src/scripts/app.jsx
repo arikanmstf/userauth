@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { setOrGetToken } from './common/Helpers';
+import { setOrGetToken, isLoggedIn } from './common/Helpers';
 import LoginContainer from './modules/guest/login/LoginContainer';
 import NotFoundComponent from './modules/notfound/NotFoundComponent';
 
-const isLoggedIn = false;
 const sessionToken = setOrGetToken(); // eslint-disable-line no-unused-vars
+const userLoggedIn = isLoggedIn(); // eslint-disable-line no-unused-vars
 
 class App extends Component {
 
@@ -28,7 +28,7 @@ class App extends Component {
             <center><img src="/assets/img/loading.gif" width="35" height="35" /></center>
           </div>
         </div> : null }
-        { isLoggedIn ?
+        { userLoggedIn ?
           <div>
             <h1>Hello World !</h1>
           </div>

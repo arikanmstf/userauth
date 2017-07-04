@@ -1,6 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';
 import { API } from '../../../common/Config';
+import { LOGIN_TOKEN_NAME, saveToStorage } from '../../../common/Helpers';
 import startedRequest from '../../../common/actions/StartedRequest';
 
 export function resolvedSubmitLoginForm (response) {
@@ -22,7 +23,11 @@ export function submitLoginForm (form) {
         axios.post(API.submitLoginForm, qs.stringify({
             ...form
         }))
-        .then(response => dispatch(resolvedSubmitLoginForm(response)))
-        .catch(error => dispatch(errorSubmitLoginForm()));
+        .then((response) => {
+            dispatch(resolvedSubmitLoginForm(response));
+            saveToStorage(LOGIN_TOKEN_NAME, response.data.login_token);
+            window.location.href = window.location.href; // eslint-disable-line no-undef
+        })
+        .catch(() => dispatch(errorSubmitLoginForm()));
     };
 }

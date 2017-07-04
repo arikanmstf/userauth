@@ -24,11 +24,11 @@ class LoginComponent extends Component {
         <div className="login-component">
           <p>Login Please</p>
           <InputText
-            onChange={(e) => this.setState({ username: e })}
+            onChange={e => this.setState({ username: e })}
             placeholder="Example user name: admin"
           />
           <InputPassword
-            onChange={(e) => this.setState({ password: e })}
+            onChange={e => this.setState({ password: e })}
             placeholder="Example password: 123"
           />
           <button className="btn btn-primary btn-login" onClick={() => this.submitLoginForm()}>Submit</button>
