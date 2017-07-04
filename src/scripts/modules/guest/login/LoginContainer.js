@@ -4,7 +4,9 @@ import submitLoginForm from './LoginActions';
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        submitLoginForm: (form) => { dispatch(submitLoginForm(form)) }
+        submitLoginForm: (form) => {
+            dispatch(submitLoginForm(form));
+        }
     };
 };
 const mapStateToProps = (state) => {

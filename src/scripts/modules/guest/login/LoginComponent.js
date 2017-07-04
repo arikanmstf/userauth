@@ -13,7 +13,7 @@ class LoginComponent extends Component {
         const form = {
             username: 'admin',
             password: '123'
-        }
+        };
         this.props.submitLoginForm(form);
     }
 
@@ -27,14 +27,14 @@ class LoginComponent extends Component {
           <InputPassword
             placeholder="Example password: 123"
           />
-					<button onClick={()=>this.submitLoginForm()}>Submit</button>
+          <button onClick={() => this.submitLoginForm()}>Submit</button>
         </div>
         );
     }
 }
 LoginComponent.propTypes = {
     submitLoginForm: PropTypes.func,
-    someParam: PropTypes.object,
+    someParam: PropTypes.object
 };
 
 export default LoginComponent;
