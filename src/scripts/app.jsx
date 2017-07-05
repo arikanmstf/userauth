@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { setOrGetToken, isLoggedIn } from './common/Helpers';
 import LoginContainer from './modules/guest/login/LoginContainer';
 import NotFoundComponent from './modules/notfound/NotFoundComponent';
+import ModalContainer from './modules/common/modal/ModalContainer';
 
 const sessionToken = setOrGetToken(); // eslint-disable-line no-unused-vars
 const userLoggedIn = isLoggedIn(); // eslint-disable-line no-unused-vars
@@ -21,6 +22,7 @@ class App extends Component {
     render () {
         return (
       <div className="main-container">
+        <ModalContainer message="Hello" />
         { !this.state.contentLoaded ?
         <div>
           <div className="loadingBaseLayer" />
@@ -29,11 +31,11 @@ class App extends Component {
           </div>
         </div> : null }
         { userLoggedIn ?
-          <div>
+          <div className="main-component">
             <h1>Hello World !</h1>
           </div>
           :
-          <div>
+          <div className="main-component">
             <Router>
               <Switch>
                 <Route exact path="/" component={LoginContainer} />

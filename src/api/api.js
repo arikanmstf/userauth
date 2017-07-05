@@ -39,6 +39,13 @@ app.use(bodyParser.json());
       error: false,
       login_token: 88d96cf4866ed1f519f3a6d3b094f0d7d4fbd2f9
     }
+
+    {
+      error: {
+        code: 403,
+        message: "Username or password wrong"
+      }
+    }
 **/
 app.post(url.api + url.membership + url.login, function (req, res) {
 
@@ -51,16 +58,19 @@ app.post(url.api + url.membership + url.login, function (req, res) {
     const randomString = Math.random() + new Date().getTime();
     const hash = CryptoJS.SHA256(TOKEN_PREFIX + randomString).toString(CryptoJS.enc.Hex);
     const response = {
-      error: false,
-      login_token: hash
+      "error": false,
+      "login_token": hash
     }
     res.send(response);
 
   } else {
     const response = {
-      error: "User or password wrong"
+      "error": {
+        "code": 403,
+        "message": "Username or password wrong"
+      }
     }
-    res.status(400);
+    res.status(response.error.code);
     res.send(response);
   }
 })
