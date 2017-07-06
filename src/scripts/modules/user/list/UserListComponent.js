@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 class UserListComponent extends Component {
 
@@ -8,18 +9,18 @@ class UserListComponent extends Component {
         this.state = props.search;
     }
     componentDidMount () {
-        this.props.getAllUsers(this.state);
+        this.props.getAllUsers();
     }
     renderUserList () {
         const userlist = this.props.userList;
 
         return userlist.map((user) => {
             return (
-            <tr key={user}>
-              <td>username</td>
-              <td>usermail</td>
+            <tr key={user.email}>
+              <td>{user.username}</td>
+              <td>{user.email}</td>
               <td>
-                <Link to={`/user/detail/${user}`}>
+                <Link to={`/user/detail/${user.username}`}>
                   <i className="glyphicon glyphicon-search" />
                 </Link>
               </td>
@@ -48,5 +49,9 @@ class UserListComponent extends Component {
         );
     }
 }
+UserListComponent.propTypes = {
+    getAllUsers: PropTypes.func.isRequired,
+    userList: PropTypes.arrayOf(Object).isRequired
+};
 
 export default UserListComponent;

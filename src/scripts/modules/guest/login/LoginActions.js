@@ -9,7 +9,7 @@ import startedRequest from '../../../common/actions/StartedRequest';
 export function resolvedSubmitLoginForm (response) {
     return {
         type: 'RESOLVED_SUBMIT_LOGIN_FORM',
-        data: response.data.response
+        data: response.data
     };
 }
 export function errorSubmitLoginForm (response) {

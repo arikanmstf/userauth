@@ -43,6 +43,7 @@ export const checkEmail = (email) => {
     return EMAIL_REGEX.test(email);
 };
 export const createErrorMessage = (message) => {
+    console.error(message);
     if (typeof message !== 'string') {
         if (message.response && message.response.data) {
             if (message.response.data.error) {

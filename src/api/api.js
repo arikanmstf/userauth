@@ -8,13 +8,15 @@ const TOKEN_PREFIX = 'hXDrV!a@aG$hH5$';
 const homedir = './src/api';
 const userlist = homedir + '/database/userlist.json';
 const tokenlist = homedir + '/database/tokenlist.json';
-const sessionTimeOut = 60*60*1000; // 1 hour
+const sessionExpireTime = 60*60*1000; // 1 hour
 
 const portNumber = 3001;
 const url = {
   api: '/api',
   membership: '/membership',
   login: '/login',
+  users: '/users',
+  get_all: '/get_all',
   is_expired: '/is_expired'
 };
 
@@ -70,7 +72,7 @@ app.post(url.api + url.membership + url.login, function (req, res) {
       "app_token": req.body.app_token,
       "login_token": hash,
       "email": req.body.email,
-      "expire_time": new Date().getTime() + sessionTimeOut
+      "expire_time": new Date().getTime() + sessionExpireTime
     }
     const tokens = jsonfile.readFileSync(tokenlist);
     tokens.push(token);
@@ -89,24 +91,69 @@ app.post(url.api + url.membership + url.login, function (req, res) {
 });
 
 /**
+  /* Get all of the users,
+  /* Url: http://localhost:3001/api/users/get_all
+  /* Method: POST
+  /* Request:
+    {
+      login_token: "94f9c3a3466bc89e384b41d41e37c103beaed02709e55b330b1a0499c852692e" // Required
+    }
+  /* Response:
+    {
+      error: false,
+      users: []
+    }
+
+    {
+      error: {
+        code: 403,
+        message: "Session expired"
+      }
+    }
+**/
+app.post(url.api + url.users + url.get_all, function (req, res) {
+
+  if (isExpired(req)) {
+    sessionExpiredError(res);
+  }
+  else {
+    const users = jsonfile.readFileSync(userlist);
+    const response = {
+      error: false,
+      users: users
+    }
+    res.send(response);
+  }
+});
+
+/**
   /* Check if login token is expired or not.
 **/
 function isExpired (req) {
     const tokens = jsonfile.readFileSync(tokenlist);
+    const users = jsonfile.readFileSync(userlist);
     var _date = new Date();
     var expired = true;
-    const result = users.find(function(token) {
-      return token.login_token === req.body.login_token && _date.getTime() < req.body.expire_time;
+    const result = tokens.find(function(token) {
+      return token.login_token === req.body.login_token && _date.getTime() < token.expire_time;
     });
+
     if (result) {
       expired = false;
     }
 
-    const response = {
-      "expired": expired
-    }
-    return response;
+    return expired;
 };
+function sessionExpiredError (res) {
+  const response = {
+    "error": {
+      "code": 403,
+      "message": "Session Expired"
+    }
+  }
+  res.status(response.error.code);
+  res.send(response);
+}
 
 app.listen(portNumber, function () {
   console.log('Express api listening on port ' + portNumber )
