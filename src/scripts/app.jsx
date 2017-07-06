@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { setOrGetToken, isLoggedIn } from './common/Helpers';
+import { setOrGetToken, isLoggedIn, logOut } from './common/Helpers';
 import LoginContainer from './modules/guest/login/LoginContainer';
 import NotFoundComponent from './modules/notfound/NotFoundComponent';
 import ModalContainer from './modules/common/modal/ModalContainer';
@@ -33,6 +33,9 @@ class App extends Component {
         </div> : null }
         { userLoggedIn ?
           <div className="main-component">
+            <header>
+              <button onClick={logOut}>Logout</button>
+            </header>
             <Router>
               <Switch>
                 <Route exact path="/" component={UserListContainer} />

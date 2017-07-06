@@ -1,6 +1,7 @@
 import CryptoJS from 'crypto-js';
 import Storage from './Storage';
 import AN_ERROR_HAS from './ErrorMessages';
+import { baseUrl } from './Config';
 
 const EMAIL_REGEX = /^[0-9a-zA-Z\._+%-]+@[0-9a-zA-Z\.-]+\.[a-zA-Z\.]{2,6}$/; // eslint-disable-line no-useless-escape
 const TOKEN_PREFIX = '2kE-Ke|@22t&g@<';
@@ -33,6 +34,10 @@ export const setOrGetToken = () => {
 
 export const isLoggedIn = () => {
     return Storage.get(LOGIN_TOKEN_NAME);
+};
+export const logOut = () => {
+    Storage.delete(LOGIN_TOKEN_NAME);
+    window.location.href = baseUrl; // eslint-disable-line no-undef
 };
 
 export const saveToStorage = (key, value) => {

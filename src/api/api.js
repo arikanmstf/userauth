@@ -72,6 +72,7 @@ app.post(url.api + url.membership + url.login, function (req, res) {
       "app_token": req.body.app_token,
       "login_token": hash,
       "email": req.body.email,
+      "login_time": new Date().getTime(),
       "expire_time": new Date().getTime() + sessionExpireTime
     }
     const tokens = jsonfile.readFileSync(tokenlist);
