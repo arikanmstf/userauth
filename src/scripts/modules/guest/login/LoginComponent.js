@@ -13,7 +13,7 @@ class LoginComponent extends Component {
     }
     submitLoginForm () {
         const form = {
-            username: this.state.username,
+            email: this.state.email,
             password: this.state.password
         };
         this.props.submitLoginForm(form);
@@ -24,8 +24,8 @@ class LoginComponent extends Component {
         <div className="login-component">
           <p>Login Please</p>
           <InputText
-            onChange={e => this.setState({ username: e })}
-            placeholder="Example user name: admin"
+            onChange={e => this.setState({ email: e })}
+            placeholder="Example email: admin@example.com"
           />
           <InputPassword
             onChange={e => this.setState({ password: e })}

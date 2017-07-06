@@ -1,7 +1,7 @@
 export function resolvedOpenModal (message) {
     return {
         type: 'RESOLVED_OPEN_MODAL',
-        data: message
+        data: message || 'Something went wrong'
     };
 }
 export function resolvedCloseModal () {

@@ -34,3 +34,7 @@ export const isLoggedIn = () => {
 export const saveToStorage = (key, value) => {
     return Storage.set(key, value);
 };
+
+export const checkEmail = (email) => {
+    return EMAIL_REGEX.test(email);
+};

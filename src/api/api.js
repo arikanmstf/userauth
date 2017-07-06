@@ -7,12 +7,14 @@ const app = express();
 const TOKEN_PREFIX = 'hXDrV!a@aG$hH5$';
 const homedir = './src/api';
 const userlist = homedir + '/database/userlist.json';
+const tokenlist = homedir + '/database/tokenlist.json';
 
 const portNumber = 3001;
 const url = {
   api: '/api',
   membership: '/membership',
-  login: '/login'
+  login: '/login',
+  is_expired: '/is_expired'
 };
 
 const allowCrossDomain = function (req, res, next) {
@@ -27,11 +29,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 /**
+  /* Save a token to the tokenlist, login
   /* Url: http://localhost:3001/api/membership/login
   /* Method: POST
   /* Request:
     {
-      username: "admin" // Required
+      email: "admin@example.com" // Required
       password: "123" // Required
     }
   /* Response:
@@ -43,7 +46,7 @@ app.use(bodyParser.json());
     {
       error: {
         code: 403,
-        message: "Username or password wrong"
+        message: "Email or password wrong"
       }
     }
 **/
@@ -51,7 +54,7 @@ app.post(url.api + url.membership + url.login, function (req, res) {
 
   const users = jsonfile.readFileSync(userlist);
   const result = users.find(function(user) {
-    return user.username === req.body.username && user.password == req.body.password;
+    return user.email === req.body.email && user.password == req.body.password;
   });
 
   if (result) {
@@ -61,19 +64,40 @@ app.post(url.api + url.membership + url.login, function (req, res) {
       "error": false,
       "login_token": hash
     }
+    const tokens = jsonfile.readFileSync(tokenlist);
     res.send(response);
 
   } else {
     const response = {
       "error": {
         "code": 403,
-        "message": "Username or password wrong"
+        "message": "Email or password wrong"
       }
     }
     res.status(response.error.code);
     res.send(response);
   }
-})
+});
+
+/**
+  /* Check if login token is expired or not.
+**/
+function isExpired (req) {
+    const tokens = jsonfile.readFileSync(tokenlist);
+    var _date = new Date();
+    var expired = true;
+    const result = users.find(function(token) {
+      return token.login_token === req.body.login_token && _date.getTime() < req.body.expire_time;
+    });
+    if (result) {
+      expired = false;
+    }
+
+    const response = {
+      "expired": expired
+    }
+    return response;
+};
 
 app.listen(portNumber, function () {
   console.log('Express api listening on port ' + portNumber )
