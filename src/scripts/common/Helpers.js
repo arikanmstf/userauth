@@ -1,5 +1,6 @@
 import CryptoJS from 'crypto-js';
 import Storage from './Storage';
+import AN_ERROR_HAS from './ErrorMessages';
 
 const EMAIL_REGEX = /^[0-9a-zA-Z\._+%-]+@[0-9a-zA-Z\.-]+\.[a-zA-Z\.]{2,6}$/; // eslint-disable-line no-useless-escape
 const TOKEN_PREFIX = '2kE-Ke|@22t&g@<';
@@ -14,17 +15,20 @@ export const validateEmail = (email) => {
     return validateNonEmpty(email) && EMAIL_REGEX.test(email);
 };
 
-export const getToken = () => {
+export const getAppToken = () => {
     return Storage.get(APP_TOKEN_NAME);
+};
+export const getLoginToken = () => {
+    return Storage.get(LOGIN_TOKEN_NAME);
 };
 const setToken = () => {
     const randomString = Math.random() + new Date().getTime();
     const hash = CryptoJS.SHA1(TOKEN_PREFIX + randomString).toString(CryptoJS.enc.Hex); // eslint-disable-line new-cap
     Storage.set(APP_TOKEN_NAME, hash);
-    return getToken();
+    return getAppToken();
 };
 export const setOrGetToken = () => {
-    return (getToken() || setToken());
+    return (getAppToken() || setToken());
 };
 
 export const isLoggedIn = () => {
@@ -37,4 +41,20 @@ export const saveToStorage = (key, value) => {
 
 export const checkEmail = (email) => {
     return EMAIL_REGEX.test(email);
+};
+export const createErrorMessage = (message) => {
+    if (typeof message !== 'string') {
+        if (message.response && message.response.data) {
+            if (message.response.data.error) {
+                message = message.response.data.error.message;
+            }
+            else {
+                message = message.response.statusText;
+            }
+        }
+        else {
+            message = AN_ERROR_HAS;
+        }
+    }
+    return message;
 };

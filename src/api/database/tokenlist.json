@@ -1,8 +1,1 @@
-[
-  {
-    "app_token": "4d7860b16a8e6455e5e7afff9d383f5fcf0d8f7e",
-    "login_token": "94f9c3a3466bc89e384b41d41e37c103beaed02709e55b330b1a0499c852692e",
-    "email": "admin@example.com",
-    "expire_time": 1599359756203
-  }
-]
+[{"app_token":"4d7860b16a8e6455e5e7afff9d383f5fcf0d8f7e","login_token":"94f9c3a3466bc89e384b41d41e37c103beaed02709e55b330b1a0499c852692e","email":"admin@example.com","expire_time":1599359756203},{"app_token":"6fa93b24ae437ed50608cc9440a50dad5f717ff0","login_token":"20eafc6c744f078e02a5fef60562fe4de8b6e9baaaf91e58c9a82dfda8fccc7b","email":"admin@example.com","expire_time":1499372004207}]

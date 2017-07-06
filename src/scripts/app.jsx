@@ -6,6 +6,7 @@ import { setOrGetToken, isLoggedIn } from './common/Helpers';
 import LoginContainer from './modules/guest/login/LoginContainer';
 import NotFoundComponent from './modules/notfound/NotFoundComponent';
 import ModalContainer from './modules/common/modal/ModalContainer';
+import UserListContainer from './modules/user/list/UserListContainer';
 
 const sessionToken = setOrGetToken(); // eslint-disable-line no-unused-vars
 const userLoggedIn = isLoggedIn(); // eslint-disable-line no-unused-vars
@@ -32,7 +33,12 @@ class App extends Component {
         </div> : null }
         { userLoggedIn ?
           <div className="main-component">
-            <h1>Hello World !</h1>
+            <Router>
+              <Switch>
+                <Route exact path="/" component={UserListContainer} />
+                <Route path="*" component={NotFoundComponent} />
+              </Switch>
+            </Router>
           </div>
           :
           <div className="main-component">

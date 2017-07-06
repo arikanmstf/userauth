@@ -1,7 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';
 import { API } from '../../../common/Config';
-import { LOGIN_TOKEN_NAME, saveToStorage, checkEmail, getToken } from '../../../common/Helpers';
+import { LOGIN_TOKEN_NAME, saveToStorage, checkEmail, getAppToken } from '../../../common/Helpers';
 import { CHECK_YOUR_MAIL } from '../../../common/ErrorMessages';
 import { openModal } from '../../../modules/common/modal/ModalActions';
 import startedRequest from '../../../common/actions/StartedRequest';
@@ -14,7 +14,7 @@ export function resolvedSubmitLoginForm (response) {
 }
 export function errorSubmitLoginForm (response) {
     return {
-        type: 'ERROR_SUBMIT_LOGIN_FORM',
+        type: 'COMMON_ERROR',
         data: response
     };
 }
@@ -25,7 +25,7 @@ export function submitLoginForm (form) {
             dispatch(startedRequest());
             axios.post(API.submitLoginForm, qs.stringify({
                 ...form,
-                app_token: getToken()
+                app_token: getAppToken()
             }))
             .then((response) => {
                 dispatch(resolvedSubmitLoginForm(response));
