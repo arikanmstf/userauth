@@ -11,6 +11,9 @@ class UserListComponent extends Component {
     componentDidMount () {
         this.props.getAllUsers();
     }
+    removeUser (username) {
+      this.props.removeUser(username);
+    }
     renderUserList () {
         const userlist = this.props.userList;
 
@@ -23,6 +26,9 @@ class UserListComponent extends Component {
                 <Link to={`/user/detail/${user.username}`}>
                   <i className="glyphicon glyphicon-search" />
                 </Link>
+                <button className="btn-danger" onClick={() => this.removeUser(user.username)}>
+                  <i className="glyphicon glyphicon-remove" />
+                </button>
               </td>
             </tr>
             );

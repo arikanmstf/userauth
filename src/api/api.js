@@ -17,6 +17,7 @@ const url = {
   login: '/login',
   users: '/users',
   get_all: '/get_all',
+  remove: '/remove',
   is_expired: '/is_expired'
 };
 
@@ -102,7 +103,7 @@ app.post(url.api + url.membership + url.login, function (req, res) {
   /* Response:
     {
       error: false,
-      users: []
+      "users": [{"username":"admin","email":"admin@example.com","password":"123"},{"username":"guest","email":"guest@domain.com","password":"guest123"}]
     }
 
     {
@@ -122,6 +123,47 @@ app.post(url.api + url.users + url.get_all, function (req, res) {
     const response = {
       error: false,
       users: users
+    }
+    res.send(response);
+  }
+});
+
+/**
+  /* Remove desired user,
+  /* Url: http://localhost:3001/api/users/remove
+  /* Method: POST
+  /* Request:
+    {
+      username: "guest", // Required
+      login_token: "94f9c3a3466bc89e384b41d41e37c103beaed02709e55b330b1a0499c852692e" // Required
+    }
+  /* Response:
+    {
+      error: false,
+      users: [{"username":"admin","email":"admin@example.com","password":"123"}]
+    }
+
+    {
+      error: {
+        code: 403,
+        message: "Session expired"
+      }
+    }
+**/
+app.post(url.api + url.users + url.remove, function (req, res) {
+
+  if (isExpired(req)) {
+    sessionExpiredError(res);
+  }
+  else {
+    const users = jsonfile.readFileSync(userlist);
+    const new_users = users.filter(function(user){
+      return user.username !== req.body.username;
+    });
+    jsonfile.writeFileSync(userlist, new_users);
+    const response = {
+      error: false,
+      users: new_users
     }
     res.send(response);
   }

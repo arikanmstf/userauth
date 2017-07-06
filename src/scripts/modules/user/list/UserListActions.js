@@ -17,7 +17,6 @@ export function errorGetAllUsers (response) {
         data: response
     };
 }
-
 export function getAllUsers () {
     return (dispatch) => {
         dispatch(startedRequest());
@@ -30,6 +29,36 @@ export function getAllUsers () {
         .catch((message) => {
             message = createErrorMessage(message);
             dispatch(errorGetAllUsers(message));
+            dispatch(openModal(message));
+        });
+    };
+}
+
+export function resolvedRemoveUser (response) {
+    return {
+        type: 'RESOLVED_GET_ALL_USERS',
+        data: response.data.users
+    };
+}
+export function errorRemoveUser (response) {
+    return {
+        type: 'COMMON_ERROR',
+        data: response
+    };
+}
+export function removeUser (username) {
+    return (dispatch) => {
+        dispatch(startedRequest());
+        axios.post(API.removeUser, qs.stringify({
+            username,
+            login_token: getLoginToken()
+        }))
+        .then((response) => {
+            dispatch(resolvedRemoveUser(response));
+        })
+        .catch((message) => {
+            message = createErrorMessage(message);
+            dispatch(errorRemoveUser(message));
             dispatch(openModal(message));
         });
     };

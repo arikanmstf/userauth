@@ -5,5 +5,6 @@ const users = 'users';
 
 export const API = {
     submitLoginForm: `${home}/${membership}/login`,
-    getAllUsers: `${home}/${users}/get_all`
+    getAllUsers: `${home}/${users}/get_all`,
+    removeUser: `${home}/${users}/remove`
 };
