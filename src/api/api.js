@@ -8,6 +8,7 @@ const TOKEN_PREFIX = 'hXDrV!a@aG$hH5$';
 const homedir = './src/api';
 const userlist = homedir + '/database/userlist.json';
 const tokenlist = homedir + '/database/tokenlist.json';
+const sessionTimeOut = 60*60*1000; // 1 hour
 
 const portNumber = 3001;
 const url = {
@@ -36,6 +37,7 @@ app.use(bodyParser.json());
     {
       email: "admin@example.com" // Required
       password: "123" // Required
+      app_token: "a7202c464050e856d78a0350d05b0cbdbd478161" // Required
     }
   /* Response:
     {
@@ -64,9 +66,16 @@ app.post(url.api + url.membership + url.login, function (req, res) {
       "error": false,
       "login_token": hash
     }
+    const token = {
+      "app_token": req.body.app_token,
+      "login_token": hash,
+      "email": req.body.email,
+      "expire_time": new Date().getTime() + sessionTimeOut
+    }
     const tokens = jsonfile.readFileSync(tokenlist);
+    tokens.push(token);
+    jsonfile.writeFileSync(tokenlist, tokens);
     res.send(response);
-
   } else {
     const response = {
       "error": {
