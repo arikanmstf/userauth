@@ -5,7 +5,8 @@ const jsonfile = require('jsonfile');
 const postmark = require('postmark');
 const Mustache = require('mustache');
 const homedir = './src/api';
-const template = require( './template.js');
+const validation_mail_template = require( './mail_templates/validation_mail_template.js');
+const removed_mail_template = require( './mail_templates/removed_mail_template.js');
 
 const app = express();
 const TOKEN_PREFIX = 'hXDrV!a@aG$hH5$';
@@ -160,12 +161,11 @@ app.post(url.api + url.membership + url.register, function (req, res) {
 
     const link = 'http://localhost:8080/guest/validate/'+hash;
 
-    const html = Mustache.render(template, { link: link });
-    console.log(html);
+    const html = Mustache.render(validation_mail_template, { link: link });
 
     emailClient.sendEmail({
       "From": "info@mustafaarikan.net",
-      "To": "test@mustafaarikan.net", //user.email,
+      "To": user.email,
       "Subject": "Validation",
       "HtmlBody": html
     });
@@ -303,12 +303,13 @@ app.post(url.api + url.users + url.remove, function (req, res) {
     const user = users.find(function(user){
       return user.username === req.body.username;
     });
+    const html = Mustache.render(removed_mail_template);
     jsonfile.writeFileSync(userlist, new_users);
     emailClient.sendEmail({
       "From": "info@mustafaarikan.net",
-      "To": "test@mustafaarikan.net", //user.email,
+      "To": user.email,
       "Subject": "Account Removed",
-      "TextBody": "Your account has been removed from the system."
+      "HtmlBody": html
     });
     const response = {
       error: false,
