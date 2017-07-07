@@ -15,6 +15,7 @@ const url = {
   api: '/api',
   membership: '/membership',
   login: '/login',
+  register: '/register',
   users: '/users',
   get_all: '/get_all',
   remove: '/remove',
@@ -59,7 +60,7 @@ app.post(url.api + url.membership + url.login, function (req, res) {
 
   const users = jsonfile.readFileSync(userlist);
   const result = users.find(function(user) {
-    return user.email === req.body.email && user.password == req.body.password;
+    return user.email === req.body.email && user.password == req.body.password && user.isvalid;
   });
 
   if (result) {
@@ -85,6 +86,61 @@ app.post(url.api + url.membership + url.login, function (req, res) {
       "error": {
         "code": 403,
         "message": "Email or password wrong"
+      }
+    }
+    res.status(response.error.code);
+    res.send(response);
+  }
+});
+
+/**
+  /* Register a new user
+  /* Url: http://localhost:3001/api/membership/register
+  /* Method: POST
+  /* Request:
+    {
+      username: "newuser" // Required
+      email: "newuser@example.com" // Required
+      password: "12345678" // Required
+      password_again: "12345678" // Required
+    }
+  /* Response:
+    {
+      error: false
+    }
+
+    {
+      error: {
+        code: 403,
+        message: "Email or password wrong"
+      }
+    }
+**/
+app.post(url.api + url.membership + url.register, function (req, res) {
+
+  const users = jsonfile.readFileSync(userlist);
+  const result = users.find(function(user) {
+    return user.email === req.body.email || user.username == req.body.username;
+  });
+
+  if (!result) {
+    const response = {
+      "error": false,
+    }
+    const user = {
+      username: req.body.username,
+      email: req.body.email,
+      password: req.body.password,
+      isvalid: false
+    }
+    users.push(user);
+    jsonfile.writeFileSync(userlist, users);
+    res.send(response);
+  } else {
+    const response = {
+      "error": {
+        "code": 403,
+        "message": "Username or email already exists."
       }
     }
     res.status(response.error.code);

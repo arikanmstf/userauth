@@ -1,8 +1,8 @@
 import axios from 'axios';
 import qs from 'qs';
 import { API } from '../../../common/Config';
-import { checkEmail, getAppToken, createErrorMessage, validatePassword } from '../../../common/Helpers';
-import { CHECK_YOUR_MAIL } from '../../../common/ErrorMessages';
+import { checkEmail, createErrorMessage, validatePassword } from '../../../common/Helpers';
+import { CHECK_YOUR_MAIL, MAIL_SENT_FOR_REGISTER } from '../../../common/ErrorMessages';
 import { openModal } from '../../../modules/common/modal/ModalActions';
 import startedRequest from '../../../common/actions/StartedRequest';
 
@@ -26,11 +26,13 @@ export function submitRegisterForm (form) {
             if (!passwordNotValid) {
                 dispatch(startedRequest());
                 axios.post(API.submitRegisterForm, qs.stringify({
-                    ...form,
-                    app_token: getAppToken()
+                    ...form
                 }))
                 .then((response) => {
-                    console.log(response);
+                    if (!response.error) {
+                        dispatch(resolvedSubmitRegisterForm(response));
+                        dispatch(openModal(MAIL_SENT_FOR_REGISTER));
+                    }
                 })
                 .catch((message) => {
                     message = createErrorMessage(message);

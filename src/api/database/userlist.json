@@ -1,12 +1,1 @@
-[
-  {
-    "username": "admin",
-    "email": "admin@example.com",
-    "password": "123"
-  },
-  {
-    "username": "guest",
-    "email": "guest@domain.com",
-    "password": "guest123"
-  }
-]
+[{"username":"admin","email":"admin@example.com","password":"12345678","isvalid":true},{"username":"guest","email":"guest@domain.com","password":"guest123456","isvalid":true},{"username":"test","email":"test@test.com","password":"12345678","isvalid":false}]

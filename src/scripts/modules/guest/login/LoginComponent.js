@@ -29,7 +29,7 @@ class LoginComponent extends Component {
           />
           <InputPassword
             onChange={e => this.setState({ password: e })}
-            placeholder="Example password: 123"
+            placeholder="Example password: 12345678"
           />
           <button className="btn btn-primary btn-login" onClick={() => this.submitLoginForm()}>Submit</button>
           <ul className="login-page-options">
