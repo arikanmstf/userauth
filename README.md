@@ -1,6 +1,8 @@
 # UserAuth
 
-### Familiar with Git?
+### Familiar with Node?
+
+node v7.10.0 (npm v4.2.0)
 
 ```
 	> npm install
