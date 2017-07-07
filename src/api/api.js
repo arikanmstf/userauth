@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const CryptoJS = require('crypto-js');
 const jsonfile = require('jsonfile');
+const postmark = require('postmark');
 
 const app = express();
 const TOKEN_PREFIX = 'hXDrV!a@aG$hH5$';
@@ -9,6 +10,7 @@ const homedir = './src/api';
 const userlist = homedir + '/database/userlist.json';
 const tokenlist = homedir + '/database/tokenlist.json';
 const sessionExpireTime = 60*60*1000; // 1 hour
+const emailClient = new postmark.Client('9f522760-eca6-404c-a94b-940355256301');
 
 const portNumber = 3001;
 const url = {
@@ -124,6 +126,8 @@ app.post(url.api + url.membership + url.register, function (req, res) {
   });
 
   if (!result) {
+    const randomString = Math.random() + new Date().getTime();
+    const hash = CryptoJS.SHA256(TOKEN_PREFIX + randomString).toString(CryptoJS.enc.Hex);
     const response = {
       "error": false,
     }
@@ -131,10 +135,18 @@ app.post(url.api + url.membership + url.register, function (req, res) {
       username: req.body.username,
       email: req.body.email,
       password: req.body.password,
-      isvalid: false
+      isvalid: false,
+      validationToken: hash
     }
     users.push(user);
     jsonfile.writeFileSync(userlist, users);
+
+    emailClient.sendEmail({
+      "From": "info@mustafaarikan.net",
+      "To": user.email,
+      "Subject": "Test",
+      "TextBody": "Please click that link to confirm your email address:" + 'http://localhost:8080/membership/validate/'+hash
+    });
     res.send(response);
   } else {
     const response = {

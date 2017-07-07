@@ -2954,6 +2954,11 @@
         }
       }
     },
+    "git-rev": {
+      "version": "0.2.1",
+      "from": "git-rev@0.2.1",
+      "resolved": "https://registry.npmjs.org/git-rev/-/git-rev-0.2.1.tgz"
+    },
     "glob": {
       "version": "7.1.2",
       "from": "glob@>=7.0.3 <8.0.0",
@@ -3885,6 +3890,11 @@
         }
       }
     },
+    "merge": {
+      "version": "1.2.0",
+      "from": "merge@1.2.0",
+      "resolved": "https://registry.npmjs.org/merge/-/merge-1.2.0.tgz"
+    },
     "merge-descriptors": {
       "version": "1.0.1",
       "from": "merge-descriptors@1.0.1",
@@ -4770,6 +4780,11 @@
       "from": "postcss-zindex@>=2.0.1 <3.0.0",
       "resolved": "https://registry.npmjs.org/postcss-zindex/-/postcss-zindex-2.2.0.tgz",
       "dev": true
+    },
+    "postmark": {
+      "version": "1.3.1",
+      "from": "postmark@latest",
+      "resolved": "https://registry.npmjs.org/postmark/-/postmark-1.3.1.tgz"
     },
     "prelude-ls": {
       "version": "1.1.2",
