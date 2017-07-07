@@ -28,7 +28,7 @@ const url = {
 
 const allowCrossDomain = function (req, res, next) {
     res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Methods', 'POST');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
 }
@@ -159,7 +159,7 @@ app.post(url.api + url.membership + url.register, function (req, res) {
     emailClient.sendEmail({
       "From": "info@mustafaarikan.net",
       "To": "test@mustafaarikan.net", //user.email,
-      "Subject": "Test",
+      "Subject": "Validation",
       "TextBody": "Please click to confirm your email address:" + 'http://localhost:8080/guest/validate/'+hash
     });
     res.send(response);
@@ -293,7 +293,16 @@ app.post(url.api + url.users + url.remove, function (req, res) {
     const new_users = users.filter(function(user){
       return user.username !== req.body.username;
     });
+    const user = users.find(function(user){
+      return user.username === req.body.username;
+    });
     jsonfile.writeFileSync(userlist, new_users);
+    emailClient.sendEmail({
+      "From": "info@mustafaarikan.net",
+      "To": "test@mustafaarikan.net", //user.email,
+      "Subject": "Account Removed",
+      "TextBody": "Your account has been removed from the system."
+    });
     const response = {
       error: false,
       users: new_users

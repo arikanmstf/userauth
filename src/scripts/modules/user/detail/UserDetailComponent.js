@@ -12,11 +12,11 @@ class UserDetailComponent extends Component {
         const loginlist = this.props.loginList;
 
         return loginlist.map((login) => {
-          const login_time = new Date(login.login_time).toUTCString();
+            const loginTime = new Date(login.login_time).toUTCString();
             return (
             <tr key={login.login_token}>
               <td>{login.username}</td>
-              <td>{login_time}</td>
+              <td>{loginTime}</td>
               <td>{login.login_token}</td>
               <td>{login.app_token}</td>
             </tr>

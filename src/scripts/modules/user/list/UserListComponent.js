@@ -12,7 +12,6 @@ class UserListComponent extends Component {
     }
     renderUserList () {
         const userlist = this.props.userList;
-
         return userlist.map((user) => {
             return (
             <tr key={user.email}>
@@ -49,6 +48,7 @@ class UserListComponent extends Component {
               </tbody>
             </table>
           </div>
+          <Link to={'/user/add'} className="btn btn-info">{'Add new user'}</Link>
         </div>
         );
     }
