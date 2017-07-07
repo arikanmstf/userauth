@@ -8,6 +8,7 @@ import NotFoundComponent from './modules/notfound/NotFoundComponent';
 
 import LoginContainer from './modules/guest/login/LoginContainer';
 import RegisterContainer from './modules/guest/register/RegisterContainer';
+import ValidateContainer from './modules/guest/validate/ValidateContainer';
 
 import ModalContainer from './modules/common/modal/ModalContainer';
 import UserListContainer from './modules/user/list/UserListContainer';
@@ -55,6 +56,7 @@ class App extends Component {
                       <Route exact path="/" component={LoginContainer} />
                       <Route exact path="/guest/login" component={LoginContainer} />
                       <Route exact path="/guest/register" component={RegisterContainer} />
+                      <Route exact path="/guest/validate/:validationToken" component={ValidateContainer} />
                       <Route path="*" component={NotFoundComponent} />
                     </Switch>
                   </Router>

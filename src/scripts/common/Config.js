@@ -6,6 +6,7 @@ const users = 'users';
 export const API = {
     submitLoginForm: `${home}/${membership}/login`,
     submitRegisterForm: `${home}/${membership}/register`,
+    submitValidation: `${home}/${membership}/validate`,
     getAllUsers: `${home}/${users}/get_all`,
     removeUser: `${home}/${users}/remove`
 };

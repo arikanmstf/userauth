@@ -145,7 +145,7 @@ app.post(url.api + url.membership + url.register, function (req, res) {
       "From": "info@mustafaarikan.net",
       "To": user.email,
       "Subject": "Test",
-      "TextBody": "Please click that link to confirm your email address:" + 'http://localhost:8080/membership/validate/'+hash
+      "TextBody": "Please click that link to confirm your email address:" + 'http://localhost:8080/guest/validate/'+hash
     });
     res.send(response);
   } else {
