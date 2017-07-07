@@ -17,6 +17,11 @@ class UserListComponent extends Component {
             <tr key={user.email}>
               <td>{user.username}</td>
               <td>{user.email}</td>
+              <td>{user.isvalid ?
+                  <span className="alert alert-success">Valid</span> :
+                  <span className="alert alert-danger">Invalid</span>
+                }
+              </td>
               <td>
                 <Link className="btn btn-info" to={`/user/detail/${user.username}`}>
                   <i className="glyphicon glyphicon-search" />
@@ -40,6 +45,7 @@ class UserListComponent extends Component {
                 <tr>
                   <td>User Name</td>
                   <td>User Email</td>
+                  <td>Is valid?</td>
                   <td>Options</td>
                 </tr>
               </thead>

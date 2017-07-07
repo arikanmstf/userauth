@@ -9,6 +9,9 @@ body {
   max-width: $containerMaxWidth;
   margin: 0 auto;
   background-color: $containerBackgroundColor;
+  .alert {
+    padding: 8px;
+  }
 
   .login-component {
     margin: 0 auto;
