@@ -23,7 +23,7 @@ class UserListComponent extends Component {
               <td>{user.username}</td>
               <td>{user.email}</td>
               <td>
-                <Link to={`/user/detail/${user.username}`}>
+                <Link className="btn btn-info" to={`/user/detail/${user.username}`}>
                   <i className="glyphicon glyphicon-search" />
                 </Link>
                 <button className="btn-danger" onClick={() => this.removeUser(user.username)}>
