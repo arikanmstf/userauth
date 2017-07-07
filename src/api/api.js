@@ -3,10 +3,12 @@ const bodyParser = require('body-parser');
 const CryptoJS = require('crypto-js');
 const jsonfile = require('jsonfile');
 const postmark = require('postmark');
+const Mustache = require('mustache');
+const homedir = './src/api';
+const template = require( './template.js');
 
 const app = express();
 const TOKEN_PREFIX = 'hXDrV!a@aG$hH5$';
-const homedir = './src/api';
 const userlist = homedir + '/database/userlist.json';
 const tokenlist = homedir + '/database/tokenlist.json';
 const sessionExpireTime = 60*60*1000; // 1 hour
@@ -156,11 +158,16 @@ app.post(url.api + url.membership + url.register, function (req, res) {
     users.push(user);
     jsonfile.writeFileSync(userlist, users);
 
+    const link = 'http://localhost:8080/guest/validate/'+hash;
+
+    const html = Mustache.render(template, { link: link });
+    console.log(html);
+
     emailClient.sendEmail({
       "From": "info@mustafaarikan.net",
       "To": "test@mustafaarikan.net", //user.email,
       "Subject": "Validation",
-      "TextBody": "Please click to confirm your email address:" + 'http://localhost:8080/guest/validate/'+hash
+      "HtmlBody": html
     });
     res.send(response);
   } else {

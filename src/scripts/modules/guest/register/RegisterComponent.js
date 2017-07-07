@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import InputText from '../../../common/input/InputText';
 import InputPassword from '../../../common/input/InputPassword';
@@ -42,10 +41,6 @@ class RegisterComponent extends Component {
             placeholder="Enter your password again"
           />
           <button className="btn btn-primary btn-login" onClick={() => this.submitRegisterForm()}>Submit</button>
-          <ul className="login-page-options">
-            <li><Link to="/guest/login">Login</Link></li>
-            <li><Link to="/guest/forgot">Forgot Password</Link></li>
-          </ul>
         </div>
         );
     }

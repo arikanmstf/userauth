@@ -2,14 +2,14 @@ import axios from 'axios';
 import qs from 'qs';
 import { API } from '../../../common/Config';
 import { checkEmail, createErrorMessage } from '../../../common/Helpers';
-import { CHECK_YOUR_MAIL, MAIL_SENT_FOR_REGISTER } from '../../../common/ErrorMessages';
+import { CHECK_YOUR_MAIL } from '../../../common/ErrorMessages';
 import { openModal } from '../../../modules/common/modal/ModalActions';
 import startedRequest from '../../../common/actions/StartedRequest';
 
 export function resolvedSubmitForgotForm (response) {
     return {
         type: 'RESOLVED_SUBMIT_REGISTER_FORM',
-        data: response.data
+        data: response
     };
 }
 export function errorSubmitForgotForm (response) {
@@ -26,9 +26,9 @@ export function submitForgotForm (form) {
             axios.post(API.submitForgotForm, qs.stringify({
                 ...form
             }))
-            .then((response) => {
-                dispatch(resolvedSubmitForgotForm(message));
-                dispatch(openModal("Your new password has been sent your email address"));
+            .then(() => {
+                dispatch(resolvedSubmitForgotForm());
+                dispatch(openModal('Your new password has been sent your email address'));
             })
             .catch((message) => {
                 message = createErrorMessage(message);
