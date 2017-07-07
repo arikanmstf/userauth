@@ -12,7 +12,7 @@ class UserListComponent extends Component {
         this.props.getAllUsers();
     }
     removeUser (username) {
-      this.props.removeUser(username);
+        this.props.removeUser(username);
     }
     renderUserList () {
         const userlist = this.props.userList;

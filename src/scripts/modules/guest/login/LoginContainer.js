@@ -9,10 +9,5 @@ const mapDispatchToProps = (dispatch) => {
         }
     };
 };
-const mapStateToProps = (state) => {
-    return {
-        someParam: state.someParam
-    };
-};
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginComponent);
+export default connect(null, mapDispatchToProps)(LoginComponent);

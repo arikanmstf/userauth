@@ -9,7 +9,7 @@ const mapDispatchToProps = (dispatch) => {
         },
         removeUser: (username) => {
             dispatch(removeUser(username));
-        },
+        }
     };
 };
 const mapStateToProps = (state) => {

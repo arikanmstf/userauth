@@ -1,7 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';
 import { API } from '../../../common/Config';
-import { LOGIN_TOKEN_NAME, saveToStorage, checkEmail, getAppToken } from '../../../common/Helpers';
+import { LOGIN_TOKEN_NAME, saveToStorage, checkEmail, getAppToken, createErrorMessage } from '../../../common/Helpers';
 import { CHECK_YOUR_MAIL } from '../../../common/ErrorMessages';
 import { openModal } from '../../../modules/common/modal/ModalActions';
 import startedRequest from '../../../common/actions/StartedRequest';
@@ -33,7 +33,7 @@ export function submitLoginForm (form) {
                 window.location.href = window.location.href; // eslint-disable-line no-undef
             })
             .catch((message) => {
-                message = (message.response) ? message.response.data.error.message : message;
+                message = createErrorMessage(message);
                 dispatch(errorSubmitLoginForm(message));
                 dispatch(openModal(message));
             });

@@ -3,8 +3,12 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { setOrGetToken, isLoggedIn, logOut } from './common/Helpers';
-import LoginContainer from './modules/guest/login/LoginContainer';
+
 import NotFoundComponent from './modules/notfound/NotFoundComponent';
+
+import LoginContainer from './modules/guest/login/LoginContainer';
+import RegisterContainer from './modules/guest/register/RegisterContainer';
+
 import ModalContainer from './modules/common/modal/ModalContainer';
 import UserListContainer from './modules/user/list/UserListContainer';
 
@@ -48,6 +52,8 @@ class App extends Component {
             <Router>
               <Switch>
                 <Route exact path="/" component={LoginContainer} />
+                <Route exact path="/guest/login" component={LoginContainer} />
+                <Route exact path="/guest/register" component={RegisterContainer} />
                 <Route path="*" component={NotFoundComponent} />
               </Switch>
             </Router>

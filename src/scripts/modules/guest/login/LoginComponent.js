@@ -41,8 +41,7 @@ class LoginComponent extends Component {
     }
 }
 LoginComponent.propTypes = {
-    submitLoginForm: PropTypes.func.isRequired,
-    someParam: PropTypes.object
+    submitLoginForm: PropTypes.func.isRequired
 };
 
 export default LoginComponent;
