@@ -8,7 +8,7 @@ import startedRequest from '../../../common/actions/StartedRequest';
 export function resolvedSubmitValidation (response) {
     return {
         type: 'RESOLVED_SUBMIT_VALIDATION',
-        data: response.data
+        data: !response.data.error
     };
 }
 export function errorSubmitValidation (response) {

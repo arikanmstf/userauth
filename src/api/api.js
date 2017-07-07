@@ -18,6 +18,7 @@ const url = {
   membership: '/membership',
   login: '/login',
   register: '/register',
+  validate: '/validate',
   users: '/users',
   get_all: '/get_all',
   remove: '/remove',
@@ -62,27 +63,40 @@ app.post(url.api + url.membership + url.login, function (req, res) {
 
   const users = jsonfile.readFileSync(userlist);
   const result = users.find(function(user) {
-    return user.email === req.body.email && user.password == req.body.password && user.isvalid;
+    return user.email === req.body.email && user.password == req.body.password;
   });
 
   if (result) {
-    const randomString = Math.random() + new Date().getTime();
-    const hash = CryptoJS.SHA256(TOKEN_PREFIX + randomString).toString(CryptoJS.enc.Hex);
-    const response = {
-      "error": false,
-      "login_token": hash
+
+    if(!result.isvalid) {
+      const response = {
+        "error": {
+          "code": 403,
+          "message": "Your email is not valid, please validate your email."
+        }
+      }
+      res.status(response.error.code);
+      res.send(response);
     }
-    const token = {
-      "app_token": req.body.app_token,
-      "login_token": hash,
-      "email": req.body.email,
-      "login_time": new Date().getTime(),
-      "expire_time": new Date().getTime() + sessionExpireTime
+    else {
+      const randomString = Math.random() + new Date().getTime();
+      const hash = CryptoJS.SHA256(TOKEN_PREFIX + randomString).toString(CryptoJS.enc.Hex);
+      const response = {
+        "error": false,
+        "login_token": hash
+      }
+      const token = {
+        "app_token": req.body.app_token,
+        "login_token": hash,
+        "email": req.body.email,
+        "login_time": new Date().getTime(),
+        "expire_time": new Date().getTime() + sessionExpireTime
+      }
+      const tokens = jsonfile.readFileSync(tokenlist);
+      tokens.push(token);
+      jsonfile.writeFileSync(tokenlist, tokens);
+      res.send(response);
     }
-    const tokens = jsonfile.readFileSync(tokenlist);
-    tokens.push(token);
-    jsonfile.writeFileSync(tokenlist, tokens);
-    res.send(response);
   } else {
     const response = {
       "error": {
@@ -143,9 +157,9 @@ app.post(url.api + url.membership + url.register, function (req, res) {
 
     emailClient.sendEmail({
       "From": "info@mustafaarikan.net",
-      "To": user.email,
+      "To": "test@mustafaarikan.net", //user.email,
       "Subject": "Test",
-      "TextBody": "Please click that link to confirm your email address:" + 'http://localhost:8080/guest/validate/'+hash
+      "TextBody": "Please click to confirm your email address:" + 'http://localhost:8080/guest/validate/'+hash
     });
     res.send(response);
   } else {
@@ -153,6 +167,56 @@ app.post(url.api + url.membership + url.register, function (req, res) {
       "error": {
         "code": 403,
         "message": "Username or email already exists."
+      }
+    }
+    res.status(response.error.code);
+    res.send(response);
+  }
+});
+
+/**
+  /* Validate email address
+  /* Url: http://localhost:3001/api/membership/validate
+  /* Method: POST
+  /* Request:
+    {
+      validation_token: "0b076a49bd46e34bc137ada02e7ebf632ae8ec8470f84bedf210157ef4e0da43" // Required
+    }
+  /* Response:
+    {
+      error: false
+    }
+
+    {
+      error: {
+        code: 403,
+        message: "Your validation record couldn't be found. Try to re-register."
+      }
+    }
+**/
+app.post(url.api + url.membership + url.validate, function (req, res) {
+
+  const users = jsonfile.readFileSync(userlist);
+  const result = users.find(function(user) {
+    return user.validationToken === req.body.validation_token;
+  });
+
+  if (result) {
+    const response = {
+      "error": false,
+    }
+    const new_users = users.filter(function(user){
+      return user.validationToken !== req.body.validation_token;
+    });
+    result.isvalid = true;
+    new_users.push(result);
+    jsonfile.writeFileSync(userlist, new_users);
+    res.send(response);
+  } else {
+    const response = {
+      "error": {
+        "code": 403,
+        "message": "Your validation record couldn't be found. Try to re-register."
       }
     }
     res.status(response.error.code);
