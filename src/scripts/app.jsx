@@ -26,40 +26,42 @@ class App extends Component {
     }
     render () {
         return (
-      <div className="main-container">
-        <ModalContainer message="Hello" />
-        { !this.state.contentLoaded ?
-        <div>
-          <div className="loadingBaseLayer" />
-          <div className="loadingSpinnerContainer">
-            <center><img src="/assets/img/loading.gif" width="35" height="35" /></center>
+          <div>
+            <ModalContainer message="" />
+            <div className="main-container">
+              { !this.state.contentLoaded ?
+              <div>
+                <div className="loadingBaseLayer" />
+                <div className="loadingSpinnerContainer">
+                  <center><img src="/assets/img/loading.gif" width="35" height="35" /></center>
+                </div>
+              </div> : null }
+              { userLoggedIn ?
+                <div className="main-component">
+                  <header>
+                    <button onClick={logOut}>Logout</button>
+                  </header>
+                  <Router>
+                    <Switch>
+                      <Route exact path="/" component={UserListContainer} />
+                      <Route path="*" component={NotFoundComponent} />
+                    </Switch>
+                  </Router>
+                </div>
+                :
+                <div className="main-component">
+                  <Router>
+                    <Switch>
+                      <Route exact path="/" component={LoginContainer} />
+                      <Route exact path="/guest/login" component={LoginContainer} />
+                      <Route exact path="/guest/register" component={RegisterContainer} />
+                      <Route path="*" component={NotFoundComponent} />
+                    </Switch>
+                  </Router>
+                </div>
+              }
+            </div>
           </div>
-        </div> : null }
-        { userLoggedIn ?
-          <div className="main-component">
-            <header>
-              <button onClick={logOut}>Logout</button>
-            </header>
-            <Router>
-              <Switch>
-                <Route exact path="/" component={UserListContainer} />
-                <Route path="*" component={NotFoundComponent} />
-              </Switch>
-            </Router>
-          </div>
-          :
-          <div className="main-component">
-            <Router>
-              <Switch>
-                <Route exact path="/" component={LoginContainer} />
-                <Route exact path="/guest/login" component={LoginContainer} />
-                <Route exact path="/guest/register" component={RegisterContainer} />
-                <Route path="*" component={NotFoundComponent} />
-              </Switch>
-            </Router>
-          </div>
-        }
-      </div>
         );
     }
 }
