@@ -8,5 +8,6 @@ export const API = {
     submitRegisterForm: `${home}/${membership}/register`,
     submitValidation: `${home}/${membership}/validate`,
     getAllUsers: `${home}/${users}/get_all`,
+    getAllLogins: `${home}/${users}/detail`,
     removeUser: `${home}/${users}/remove`
 };

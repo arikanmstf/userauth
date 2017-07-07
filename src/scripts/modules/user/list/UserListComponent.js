@@ -4,10 +4,6 @@ import PropTypes from 'prop-types';
 
 class UserListComponent extends Component {
 
-    constructor (props) {
-        super(props);
-        this.state = props.search;
-    }
     componentDidMount () {
         this.props.getAllUsers();
     }
@@ -39,18 +35,20 @@ class UserListComponent extends Component {
         return (
         <div className="user-list-component">
           <h1>User List:</h1>
-          <table className="table table-hover table-responsive user-list-table">
-            <thead>
-              <tr>
-                <td>User Name</td>
-                <td>User Email</td>
-                <td>Options</td>
-              </tr>
-            </thead>
-            <tbody>
-              { this.renderUserList() }
-            </tbody>
-          </table>
+          <div className="table-responsive">
+            <table className="table table-hover user-list-table">
+              <thead>
+                <tr>
+                  <td>User Name</td>
+                  <td>User Email</td>
+                  <td>Options</td>
+                </tr>
+              </thead>
+              <tbody>
+                { this.renderUserList() }
+              </tbody>
+            </table>
+          </div>
         </div>
         );
     }

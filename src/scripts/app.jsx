@@ -12,6 +12,7 @@ import ValidateContainer from './modules/guest/validate/ValidateContainer';
 
 import ModalContainer from './modules/common/modal/ModalContainer';
 import UserListContainer from './modules/user/list/UserListContainer';
+import UserDetailContainer from './modules/user/detail/UserDetailContainer';
 
 const sessionToken = setOrGetToken(); // eslint-disable-line no-unused-vars
 const userLoggedIn = isLoggedIn(); // eslint-disable-line no-unused-vars
@@ -45,6 +46,7 @@ class App extends Component {
                   <Router>
                     <Switch>
                       <Route exact path="/" component={UserListContainer} />
+                      <Route exact path="/user/detail/:userName" component={UserDetailContainer} />
                       <Route path="*" component={NotFoundComponent} />
                     </Switch>
                   </Router>

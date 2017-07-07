@@ -20,6 +20,7 @@ const url = {
   register: '/register',
   validate: '/validate',
   users: '/users',
+  detail: '/detail',
   get_all: '/get_all',
   remove: '/remove',
   is_expired: '/is_expired'
@@ -88,7 +89,7 @@ app.post(url.api + url.membership + url.login, function (req, res) {
       const token = {
         "app_token": req.body.app_token,
         "login_token": hash,
-        "email": req.body.email,
+        "username": result.username,
         "login_time": new Date().getTime(),
         "expire_time": new Date().getTime() + sessionExpireTime
       }
@@ -296,6 +297,47 @@ app.post(url.api + url.users + url.remove, function (req, res) {
     const response = {
       error: false,
       users: new_users
+    }
+    res.send(response);
+  }
+});
+
+/**
+  /* Get login details of user,
+  /* Url: http://localhost:3001/api/users/detail
+  /* Method: POST
+  /* Request:
+    {
+      username: "guest", // Required
+      login_token: "94f9c3a3466bc89e384b41d41e37c103beaed02709e55b330b1a0499c852692e" // Required
+    }
+  /* Response:
+    {
+      error: false,
+      logins: [{"app_token":"5c17b65204d2940eec456ceaac18d9c9ed890079","login_token":"1b0550321556e711620eb6f08e1de1bf464859c3108441f4060bb0fa978b4409","username":"admin","login_time":1499450554300,"expire_time":1499454154300}]
+    }
+
+    {
+      error: {
+        code: 403,
+        message: "Session expired"
+      }
+    }
+**/
+app.post(url.api + url.users + url.detail, function (req, res) {
+
+  if (isExpired(req)) {
+    sessionExpiredError(res);
+  }
+  else {
+    const tokens = jsonfile.readFileSync(tokenlist);
+    const logins = tokens.filter(function(token){
+      return token.username === req.body.username;
+    });
+
+    const response = {
+      error: false,
+      logins: logins
     }
     res.send(response);
   }
