@@ -5,12 +5,13 @@ import PropTypes from 'prop-types';
 import { setOrGetToken, isLoggedIn, logOut } from './common/Helpers';
 
 import NotFoundComponent from './modules/notfound/NotFoundComponent';
+import ModalContainer from './modules/common/modal/ModalContainer';
 
 import LoginContainer from './modules/guest/login/LoginContainer';
 import RegisterContainer from './modules/guest/register/RegisterContainer';
+import UserForgotContainer from './modules/guest/forgot/UserForgotContainer';
 import ValidateContainer from './modules/guest/validate/ValidateContainer';
 
-import ModalContainer from './modules/common/modal/ModalContainer';
 import UserListContainer from './modules/user/list/UserListContainer';
 import UserDetailContainer from './modules/user/detail/UserDetailContainer';
 
@@ -59,6 +60,7 @@ class App extends Component {
                       <Route exact path="/" component={LoginContainer} />
                       <Route exact path="/guest/login" component={LoginContainer} />
                       <Route exact path="/guest/register" component={RegisterContainer} />
+                      <Route exact path="/guest/forgot" component={UserForgotContainer} />
                       <Route exact path="/guest/validate/:validationToken" component={ValidateContainer} />
                       <Route path="*" component={NotFoundComponent} />
                     </Switch>
