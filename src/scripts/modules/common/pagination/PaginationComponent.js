@@ -65,8 +65,8 @@ export default class PaginationComponent extends Component {
             }
         }
         return (
-          <ul className='pagination-list'>
-            <div className='pagination-list-container'>
+          <ul className='pagination-component'>
+            <div className='pagination-div'>
               {this.firstPage()}
               {this.prevPage()}
               {result}

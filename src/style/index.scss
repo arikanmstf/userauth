@@ -27,6 +27,32 @@ body {
   .validate-component {
     text-align: center;
   }
+  .pagination-component {
+    clear: both;
+    padding: 0px;
+    margin: 15px auto;
+
+    .pagination-div {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: center;
+      background-color: $containerBackgroundColor;
+
+      a {
+        list-style: none;
+        padding: 6px 10px;
+        cursor: pointer;
+        border-radius: 3px;
+
+        &.active {
+          background: $activePaginationBackgroundColor;
+          color: $activePaginationColor;
+          padding: 6px 12px;
+        }
+      }
+    }
+  }
 }
 .loadingBaseLayer {
   position: fixed;
@@ -64,7 +90,7 @@ body {
       color: #000000;
       z-index: 11;
     }
-  }
+}
 .alert {
   padding: 8px;
 }
