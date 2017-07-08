@@ -6,6 +6,7 @@ const postmark = require('postmark');
 const Mustache = require('mustache');
 
 const homedir = './src/api';
+const EMAIL_REGEX = /^[0-9a-zA-Z\._+%-]+@[0-9a-zA-Z\.-]+\.[a-zA-Z\.]{2,6}$/; // eslint-disable-line no-useless-escape
 const validationMailTemplate = require('./mail_templates/validation_mail_template.js');
 const removedMailTemplate = require('./mail_templates/removed_mail_template.js');
 const recoverMailTemplate = require('./mail_templates/recover_mail_template.js');
@@ -16,6 +17,9 @@ const userlist = `${homedir}/database/userlist.json`;
 const tokenlist = `${homedir}/database/tokenlist.json`;
 const sessionExpireTime = 60 * 60 * 1000; // 1 hour
 const emailClient = new postmark.Client('9f522760-eca6-404c-a94b-940355256301');
+const PASSWORD_NOT_MATCH = 'Passwords you entered not match';
+const PASSWORD_TOO_SHORT = 'Password you entered is too short';
+const MIN_PASSWORD_LENGTH = 8;
 
 const portNumber = 3001;
 const url = {
@@ -91,6 +95,19 @@ function sessionExpiredError (res) {
     res.status(response.error.code);
     res.send(response);
 }
+
+/* Validate email address */
+function isValidEmail (email) {
+    return email && EMAIL_REGEX.test(email);
+}
+
+/* Validate passwords */
+function validatePassword (password, passwordAgain) {
+    if (password !== passwordAgain) return PASSWORD_NOT_MATCH;
+    else if (password.length < MIN_PASSWORD_LENGTH) return PASSWORD_TOO_SHORT;
+    return false;
+};
+
 /**
   /* Save a token to the tokenlist, login
   /* Url: http://localhost:3001/api/membership/login
@@ -116,6 +133,17 @@ function sessionExpiredError (res) {
 **/
 app.post(url.api + url.membership + url.login, (req, res) => {
     const users = jsonfile.readFileSync(userlist);
+    if (!isValidEmail(req.body.email)) {
+        const response = {
+            error: {
+                code: 403,
+                message: 'Please check your email.'
+            }
+        };
+        res.status(response.error.code);
+        res.send(response);
+        return true;
+    }
     const result = users.find((user) => {
         return user.email === req.body.email && user.password === req.body.password;
     });
@@ -191,6 +219,30 @@ app.post(url.api + url.membership + url.register, (req, res) => {
     const result = users.find((user) => {
         return user.email === req.body.email || user.username === req.body.username;
     });
+    const validatePwError = validatePassword(req.body.password, req.body.password_again);
+
+    if(!isValidEmail(req.body.email)) {
+        const response = {
+            error: {
+                code: 403,
+                message: 'Please check your email.'
+            }
+        };
+        res.status(response.error.code);
+        res.send(response);
+        return true;
+    }
+    else if (validatePwError) {
+        const response = {
+            error: {
+                code: 403,
+                message: validatePwError
+            }
+        };
+        res.status(response.error.code);
+        res.send(response);
+        return true;
+    }
 
     if (!result) {
         const randomString = Math.random() + new Date().getTime();
@@ -298,6 +350,17 @@ app.post(url.api + url.membership + url.forgot, (req, res) => {
     const result = users.find((user) => {
         return user.email === req.body.email;
     });
+    if (!isValidEmail(req.body.email)) {
+        const response = {
+            error: {
+                code: 403,
+                message: 'Please check your email.'
+            }
+        };
+        res.status(response.error.code);
+        res.send(response);
+        return true;
+    }
 
     if (result) {
         const newUsers = users.filter((user) => {
