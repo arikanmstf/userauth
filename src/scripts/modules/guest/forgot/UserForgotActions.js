@@ -1,8 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';
-import { API } from '../../../common/Config';
+import { API, ErrorMessages } from '../../../common/Config';
 import { checkEmail, createErrorMessage } from '../../../common/Helpers';
-import { CHECK_YOUR_MAIL } from '../../../common/ErrorMessages';
 import { openModal } from '../../../modules/common/modal/ModalActions';
 import startedRequest from '../../../common/actions/StartedRequest';
 
@@ -37,8 +36,8 @@ export function submitForgotForm (form) {
             });
         }
         else {
-            dispatch(errorSubmitForgotForm(CHECK_YOUR_MAIL));
-            dispatch(openModal(CHECK_YOUR_MAIL));
+            dispatch(errorSubmitForgotForm(ErrorMessages.CHECK_YOUR_MAIL));
+            dispatch(openModal(ErrorMessages.CHECK_YOUR_MAIL));
         }
     };
 }

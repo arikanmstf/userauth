@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { RECORDS_PER_PAGE } from '../../../common/Config';
 
-const recordsPerPage = 5;
 /* eslint-disable quotes */
 export default class PaginationComponent extends Component {
 
@@ -12,7 +12,7 @@ export default class PaginationComponent extends Component {
     }
 
     nextPage () {
-        const totalPage = parseInt(this.props.total / recordsPerPage, 10) + 1;
+        const totalPage = parseInt(this.props.total / RECORDS_PER_PAGE, 10) + 1;
         const pageNo = parseInt(this.props.pageNo, 10);
 
         if (totalPage !== pageNo) {
@@ -21,7 +21,7 @@ export default class PaginationComponent extends Component {
         return null;
     }
     lastPage () {
-        const totalPage = parseInt(this.props.total / recordsPerPage, 10) + 1;
+        const totalPage = parseInt(this.props.total / RECORDS_PER_PAGE, 10) + 1;
         const pageNo = parseInt(this.props.pageNo, 10);
 
         if (totalPage !== pageNo) {
@@ -51,7 +51,7 @@ export default class PaginationComponent extends Component {
         return (<Link to={`/${this.props.linkTo}/${i}`} className={className} key={i} onClick={this.props.onLiClick}>{i}</Link>);
     }
     render () {
-        const totalPage = parseInt(this.props.total / recordsPerPage, 10) + 1;
+        const totalPage = parseInt(this.props.total / RECORDS_PER_PAGE, 10) + 1;
         const pageNo = parseInt(this.props.pageNo, 10);
         const result = [];
         if (totalPage > 10) {

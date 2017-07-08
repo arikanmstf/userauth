@@ -1,21 +1,14 @@
 import CryptoJS from 'crypto-js';
 import Storage from './Storage';
-import { AN_ERROR_HAS, PASSWORD_NOT_MATCH, PASSWORD_TOO_SHORT } from './ErrorMessages';
-import { baseUrl } from './Config';
+import { baseUrl, ErrorMessages, MIN_PASSWORD_LENGTH, EMAIL_REGEX } from './Config';
 
-const EMAIL_REGEX = /^[0-9a-zA-Z\._+%-]+@[0-9a-zA-Z\.-]+\.[a-zA-Z\.]{2,6}$/; // eslint-disable-line no-useless-escape
 const TOKEN_PREFIX = '2kE-Ke|@22t&g@<';
-const MIN_PASSWORD_LENGTH = 8;
 
 export const APP_TOKEN_NAME = 'UserAuthAppToken';
 export const LOGIN_TOKEN_NAME = 'UserAuthLoginToken';
 
 export const validateNonEmpty = (field) => {
     return field;
-};
-
-export const validateEmail = (email) => {
-    return validateNonEmpty(email) && EMAIL_REGEX.test(email);
 };
 
 export const getAppToken = () => {
@@ -50,8 +43,8 @@ export const checkEmail = (email) => {
     return EMAIL_REGEX.test(email);
 };
 export const validatePassword = (password, passwordAgain) => {
-    if (password !== passwordAgain) return PASSWORD_NOT_MATCH;
-    else if (password.length < MIN_PASSWORD_LENGTH) return PASSWORD_TOO_SHORT;
+    if (password !== passwordAgain) return ErrorMessages.PASSWORD_NOT_MATCH;
+    else if (password.length < MIN_PASSWORD_LENGTH) return ErrorMessages.PASSWORD_TOO_SHORT;
     return false;
 };
 export const createErrorMessage = (message) => {
@@ -66,7 +59,7 @@ export const createErrorMessage = (message) => {
             }
         }
         else {
-            message = AN_ERROR_HAS;
+            message = ErrorMessages.AN_ERROR_HAS;
         }
     }
     return message;

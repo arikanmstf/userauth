@@ -4,24 +4,21 @@ const CryptoJS = require('crypto-js');
 const jsonfile = require('jsonfile');
 const postmark = require('postmark');
 const Mustache = require('mustache');
-
-const homedir = './src/api';
-const EMAIL_REGEX = /^[0-9a-zA-Z\._+%-]+@[0-9a-zA-Z\.-]+\.[a-zA-Z\.]{2,6}$/; // eslint-disable-line no-useless-escape
+const config = require('../scripts/common/Config.js');
 const validationMailTemplate = require('./mail_templates/validation_mail_template.js');
 const removedMailTemplate = require('./mail_templates/removed_mail_template.js');
 const recoverMailTemplate = require('./mail_templates/recover_mail_template.js');
 
+const homedir = './src/api';
 const app = express();
 const TOKEN_PREFIX = 'hXDrV!a@aG$hH5$';
 const userlist = `${homedir}/database/userlist.json`;
 const tokenlist = `${homedir}/database/tokenlist.json`;
 const sessionExpireTime = 60 * 60 * 1000; // 1 hour
 const emailClient = new postmark.Client('9f522760-eca6-404c-a94b-940355256301');
-const PASSWORD_NOT_MATCH = 'Passwords you entered not match';
-const PASSWORD_TOO_SHORT = 'Password you entered is too short';
-const MIN_PASSWORD_LENGTH = 8;
+const ErrorMessages = config.ErrorMessages;
+const EMAIL_REGEX = config.EMAIL_REGEX;
 
-const portNumber = 3001;
 const url = {
     api: '/api',
     membership: '/membership',
@@ -37,7 +34,7 @@ const url = {
 };
 
 const allowCrossDomain = function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
+    res.header('Access-Control-Allow-Origin', config.baseUrl);
     res.header('Access-Control-Allow-Methods', 'POST');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
@@ -65,9 +62,8 @@ function makeid () {
 
 */
 function paginate (array, pageNumber) {
-    const pageSize = 5;
     pageNumber -= 1;
-    return array.slice(pageNumber * pageSize, (pageNumber + 1) * pageSize);
+    return array.slice(pageNumber * config.RECORDS_PER_PAGE, (pageNumber + 1) * config.RECORDS_PER_PAGE);
 }
 /**
   /* Check if login token is expired or not.
@@ -89,7 +85,7 @@ function sessionExpiredError (res) {
     const response = {
         error: {
             code: 403,
-            message: 'Session Expired'
+            message: ErrorMessages.SESSION_EXP
         }
     };
     res.status(response.error.code);
@@ -103,8 +99,8 @@ function isValidEmail (email) {
 
 /* Validate passwords */
 function validatePassword (password, passwordAgain) {
-    if (password !== passwordAgain) return PASSWORD_NOT_MATCH;
-    else if (password.length < MIN_PASSWORD_LENGTH) return PASSWORD_TOO_SHORT;
+    if (password !== passwordAgain) return ErrorMessages.PASSWORD_NOT_MATCH;
+    else if (password.length < config.MIN_PASSWORD_LENGTH) return ErrorMessages.PASSWORD_TOO_SHORT;
     return false;
 };
 
@@ -137,7 +133,7 @@ app.post(url.api + url.membership + url.login, (req, res) => {
         const response = {
             error: {
                 code: 403,
-                message: 'Please check your email.'
+                message: ErrorMessages.CHECK_YOUR_MAIL
             }
         };
         res.status(response.error.code);
@@ -153,7 +149,7 @@ app.post(url.api + url.membership + url.login, (req, res) => {
             const response = {
                 error: {
                     code: 403,
-                    message: 'Your email is not valid, please validate your email.'
+                    message: ErrorMessages.INVALID_ACCOUNT
                 }
             };
             res.status(response.error.code);
@@ -183,7 +179,7 @@ app.post(url.api + url.membership + url.login, (req, res) => {
         const response = {
             error: {
                 code: 403,
-                message: 'Email or password wrong'
+                message: ErrorMessages.EMAIL_PW
             }
         };
         res.status(response.error.code);
@@ -225,7 +221,7 @@ app.post(url.api + url.membership + url.register, (req, res) => {
         const response = {
             error: {
                 code: 403,
-                message: 'Please check your email.'
+                message: ErrorMessages.CHECK_YOUR_MAIL
             }
         };
         res.status(response.error.code);
@@ -260,7 +256,7 @@ app.post(url.api + url.membership + url.register, (req, res) => {
         users.push(user);
         jsonfile.writeFileSync(userlist, users);
 
-        const link = `http://localhost:8080/guest/validate/${hash}`;
+        const link = `${config.baseUrl}/guest/validate/${hash}`;
         const html = Mustache.render(validationMailTemplate, { link });
         emailClient.sendEmail({
             From: 'info@mustafaarikan.net',
@@ -274,7 +270,7 @@ app.post(url.api + url.membership + url.register, (req, res) => {
         const response = {
             error: {
                 code: 403,
-                message: 'Username or email already exists.'
+                message: ErrorMessages.UN_EXISTS
             }
         };
         res.status(response.error.code);
@@ -324,7 +320,7 @@ app.post(url.api + url.membership + url.validate, (req, res) => {
         const response = {
             error: {
                 code: 403,
-                message: 'Your validation record couldn"t be found. Try to re-register.'
+                message: ErrorMessages.VALIDATION_NOT_FOUND
             }
         };
         res.status(response.error.code);
@@ -354,7 +350,7 @@ app.post(url.api + url.membership + url.forgot, (req, res) => {
         const response = {
             error: {
                 code: 403,
-                message: 'Please check your email.'
+                message: ErrorMessages.CHECK_YOUR_MAIL
             }
         };
         res.status(response.error.code);
@@ -515,6 +511,6 @@ app.post(url.api + url.users + url.detail, (req, res) => {
     }
 });
 
-app.listen(portNumber, () => {
-    console.log(`Express api listening on port: ${portNumber}`); // eslint-disable-line no-console
+app.listen(config.API_PORT_NUMBER, () => {
+    console.log(`Express api listening on port: ${config.API_PORT_NUMBER}`); // eslint-disable-line no-console
 });

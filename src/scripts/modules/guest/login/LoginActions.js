@@ -1,8 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';
-import { API, baseUrl } from '../../../common/Config';
+import { API, baseUrl, ErrorMessages } from '../../../common/Config';
 import { LOGIN_TOKEN_NAME, saveToStorage, checkEmail, getAppToken, createErrorMessage } from '../../../common/Helpers';
-import { CHECK_YOUR_MAIL } from '../../../common/ErrorMessages';
 import { openModal } from '../../../modules/common/modal/ModalActions';
 import startedRequest from '../../../common/actions/StartedRequest';
 
@@ -39,8 +38,8 @@ export function submitLoginForm (form) {
             });
         }
         else {
-            dispatch(errorSubmitLoginForm(CHECK_YOUR_MAIL));
-            dispatch(openModal(CHECK_YOUR_MAIL));
+            dispatch(errorSubmitLoginForm(ErrorMessages.CHECK_YOUR_MAIL));
+            dispatch(openModal(ErrorMessages.CHECK_YOUR_MAIL));
         }
     };
 }
