@@ -4,31 +4,32 @@ const CryptoJS = require('crypto-js');
 const jsonfile = require('jsonfile');
 const postmark = require('postmark');
 const Mustache = require('mustache');
+
 const homedir = './src/api';
-const validation_mail_template = require( './mail_templates/validation_mail_template.js');
-const removed_mail_template = require( './mail_templates/removed_mail_template.js');
-const recover_mail_template = require( './mail_templates/recover_mail_template.js');
+const validationMailTemplate = require('./mail_templates/validation_mail_template.js');
+const removedMailTemplate = require('./mail_templates/removed_mail_template.js');
+const recoverMailTemplate = require('./mail_templates/recover_mail_template.js');
 
 const app = express();
 const TOKEN_PREFIX = 'hXDrV!a@aG$hH5$';
-const userlist = homedir + '/database/userlist.json';
-const tokenlist = homedir + '/database/tokenlist.json';
-const sessionExpireTime = 60*60*1000; // 1 hour
+const userlist = `${homedir}/database/userlist.json`;
+const tokenlist = `${homedir}/database/tokenlist.json`;
+const sessionExpireTime = 60 * 60 * 1000; // 1 hour
 const emailClient = new postmark.Client('9f522760-eca6-404c-a94b-940355256301');
 
 const portNumber = 3001;
 const url = {
-  api: '/api',
-  membership: '/membership',
-  login: '/login',
-  register: '/register',
-  validate: '/validate',
-  forgot: '/forgot',
-  users: '/users',
-  detail: '/detail',
-  get_all: '/get_all',
-  remove: '/remove',
-  is_expired: '/is_expired'
+    api: '/api',
+    membership: '/membership',
+    login: '/login',
+    register: '/register',
+    validate: '/validate',
+    forgot: '/forgot',
+    users: '/users',
+    detail: '/detail',
+    get_all: '/get_all',
+    remove: '/remove',
+    is_expired: '/is_expired'
 };
 
 const allowCrossDomain = function (req, res, next) {
@@ -36,7 +37,7 @@ const allowCrossDomain = function (req, res, next) {
     res.header('Access-Control-Allow-Methods', 'POST');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
-}
+};
 
 app.use(allowCrossDomain);
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -46,25 +47,50 @@ app.use(bodyParser.json());
  /* https://stackoverflow.com/a/1349426/5669415
 
 */
-function makeid() {
-  var text = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+function makeid () {
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-  for (var i = 0; i < 10; i++)
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-  return text;
+    for (let i = 0; i < 10; i += 1) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
 }
 
 /** Basic pagination function
 
 */
-function paginate (array, page_number) {
-  const page_size = 5;
-  --page_number;
-  return array.slice(page_number * page_size, (page_number + 1) * page_size);
+function paginate (array, pageNumber) {
+    const pageSize = 5;
+    pageNumber -= 1;
+    return array.slice(pageNumber * pageSize, (pageNumber + 1) * pageSize);
 }
+/**
+  /* Check if login token is expired or not.
+**/
+function isExpired (req) {
+    const tokens = jsonfile.readFileSync(tokenlist);
+    const currentDate = new Date();
+    let expired = true;
+    const result = tokens.find((token) => {
+        return token.login_token === req.body.login_token && currentDate.getTime() < token.expire_time;
+    });
 
+    if (result) {
+        expired = false;
+    }
+    return expired;
+}
+function sessionExpiredError (res) {
+    const response = {
+        error: {
+            code: 403,
+            message: 'Session Expired'
+        }
+    };
+    res.status(response.error.code);
+    res.send(response);
+}
 /**
   /* Save a token to the tokenlist, login
   /* Url: http://localhost:3001/api/membership/login
@@ -88,54 +114,53 @@ function paginate (array, page_number) {
       }
     }
 **/
-app.post(url.api + url.membership + url.login, function (req, res) {
+app.post(url.api + url.membership + url.login, (req, res) => {
+    const users = jsonfile.readFileSync(userlist);
+    const result = users.find((user) => {
+        return user.email === req.body.email && user.password === req.body.password;
+    });
 
-  const users = jsonfile.readFileSync(userlist);
-  const result = users.find(function(user) {
-    return user.email === req.body.email && user.password == req.body.password;
-  });
-
-  if (result) {
-
-    if(!result.isvalid) {
-      const response = {
-        "error": {
-          "code": 403,
-          "message": "Your email is not valid, please validate your email."
+    if (result) {
+        if (!result.isvalid) {
+            const response = {
+                error: {
+                    code: 403,
+                    message: 'Your email is not valid, please validate your email.'
+                }
+            };
+            res.status(response.error.code);
+            res.send(response);
         }
-      }
-      res.status(response.error.code);
-      res.send(response);
+        else {
+            const randomString = Math.random() + new Date().getTime();
+            const hash = CryptoJS.SHA256(TOKEN_PREFIX + randomString).toString(CryptoJS.enc.Hex); // eslint-disable-line new-cap
+            const response = {
+                error: false,
+                login_token: hash
+            };
+            const token = {
+                app_token: req.body.app_token,
+                login_token: hash,
+                username: result.username,
+                login_time: new Date().getTime(),
+                expire_time: new Date().getTime() + sessionExpireTime
+            };
+            const tokens = jsonfile.readFileSync(tokenlist);
+            tokens.push(token);
+            jsonfile.writeFileSync(tokenlist, tokens);
+            res.send(response);
+        }
     }
-    else {
-      const randomString = Math.random() + new Date().getTime();
-      const hash = CryptoJS.SHA256(TOKEN_PREFIX + randomString).toString(CryptoJS.enc.Hex);
-      const response = {
-        "error": false,
-        "login_token": hash
-      }
-      const token = {
-        "app_token": req.body.app_token,
-        "login_token": hash,
-        "username": result.username,
-        "login_time": new Date().getTime(),
-        "expire_time": new Date().getTime() + sessionExpireTime
-      }
-      const tokens = jsonfile.readFileSync(tokenlist);
-      tokens.push(token);
-      jsonfile.writeFileSync(tokenlist, tokens);
-      res.send(response);
+    else {
+        const response = {
+            error: {
+                code: 403,
+                message: 'Email or password wrong'
+            }
+        };
+        res.status(response.error.code);
+        res.send(response);
     }
-  } else {
-    const response = {
-      "error": {
-        "code": 403,
-        "message": "Email or password wrong"
-      }
-    }
-    res.status(response.error.code);
-    res.send(response);
-  }
 });
 
 /**
@@ -161,50 +186,48 @@ app.post(url.api + url.membership + url.login, function (req, res) {
       }
     }
 **/
-app.post(url.api + url.membership + url.register, function (req, res) {
-
-  const users = jsonfile.readFileSync(userlist);
-  const result = users.find(function(user) {
-    return user.email === req.body.email || user.username == req.body.username;
-  });
-
-  if (!result) {
-    const randomString = Math.random() + new Date().getTime();
-    const hash = CryptoJS.SHA256(TOKEN_PREFIX + randomString).toString(CryptoJS.enc.Hex);
-    const response = {
-      "error": false,
-    }
-    const user = {
-      username: req.body.username,
-      email: req.body.email,
-      password: req.body.password,
-      isvalid: false,
-      validationToken: hash
-    }
-    users.push(user);
-    jsonfile.writeFileSync(userlist, users);
-
-    const link = 'http://localhost:8080/guest/validate/'+hash;
-
-    const html = Mustache.render(validation_mail_template, { link: link });
-
-    emailClient.sendEmail({
-      "From": "info@mustafaarikan.net",
-      "To": user.email,
-      "Subject": "Validation",
-      "HtmlBody": html
+app.post(url.api + url.membership + url.register, (req, res) => {
+    const users = jsonfile.readFileSync(userlist);
+    const result = users.find((user) => {
+        return user.email === req.body.email || user.username === req.body.username;
     });
-    res.send(response);
-  } else {
-    const response = {
-      "error": {
-        "code": 403,
-        "message": "Username or email already exists."
-      }
+
+    if (!result) {
+        const randomString = Math.random() + new Date().getTime();
+        const hash = CryptoJS.SHA256(TOKEN_PREFIX + randomString).toString(CryptoJS.enc.Hex); // eslint-disable-line new-cap
+        const response = {
+            error: false
+        };
+        const user = {
+            username: req.body.username,
+            email: req.body.email,
+            password: req.body.password,
+            isvalid: false,
+            validationToken: hash
+        };
+        users.push(user);
+        jsonfile.writeFileSync(userlist, users);
+
+        const link = `http://localhost:8080/guest/validate/${hash}`;
+        const html = Mustache.render(validationMailTemplate, { link });
+        emailClient.sendEmail({
+            From: 'info@mustafaarikan.net',
+            To: user.email,
+            Subject: 'Validation',
+            HtmlBody: html
+        });
+        res.send(response);
     }
-    res.status(response.error.code);
-    res.send(response);
-  }
+    else {
+        const response = {
+            error: {
+                code: 403,
+                message: 'Username or email already exists.'
+            }
+        };
+        res.status(response.error.code);
+        res.send(response);
+    }
 });
 
 /**
@@ -227,36 +250,35 @@ app.post(url.api + url.membership + url.register, function (req, res) {
       }
     }
 **/
-app.post(url.api + url.membership + url.validate, function (req, res) {
-
-  const users = jsonfile.readFileSync(userlist);
-  const result = users.find(function(user) {
-    return user.validationToken === req.body.validation_token;
-  });
-
-  if (result) {
-    const response = {
-      "error": false,
-    }
-    const new_users = users.filter(function(user){
-      return user.validationToken !== req.body.validation_token;
+app.post(url.api + url.membership + url.validate, (req, res) => {
+    const users = jsonfile.readFileSync(userlist);
+    const result = users.find((user) => {
+        return user.validationToken === req.body.validation_token;
     });
-    result.isvalid = true;
-    new_users.push(result);
-    jsonfile.writeFileSync(userlist, new_users);
-    res.send(response);
-  } else {
-    const response = {
-      "error": {
-        "code": 403,
-        "message": "Your validation record couldn't be found. Try to re-register."
-      }
-    }
-    res.status(response.error.code);
-    res.send(response);
-  }
-});
 
+    if (result) {
+        const response = {
+            error: false
+        };
+        const newUsers = users.filter((user) => {
+            return user.validationToken !== req.body.validation_token;
+        });
+        result.isvalid = true;
+        newUsers.push(result);
+        jsonfile.writeFileSync(userlist, newUsers);
+        res.send(response);
+    }
+    else {
+        const response = {
+            error: {
+                code: 403,
+                message: 'Your validation record couldn"t be found. Try to re-register.'
+            }
+        };
+        res.status(response.error.code);
+        res.send(response);
+    }
+});
 
 /**
   /* Recover password
@@ -271,33 +293,32 @@ app.post(url.api + url.membership + url.validate, function (req, res) {
       error: false
     }
 **/
-app.post(url.api + url.membership + url.forgot, function (req, res) {
-
-  const users = jsonfile.readFileSync(userlist);
-  const result = users.find(function(user) {
-    return user.email === req.body.email;
-  });
-
-  if (result) {
-    const new_users = users.filter(function(user){
-      return user.email !== req.body.email;
+app.post(url.api + url.membership + url.forgot, (req, res) => {
+    const users = jsonfile.readFileSync(userlist);
+    const result = users.find((user) => {
+        return user.email === req.body.email;
     });
-    const new_pass = makeid();
-    result.password = new_pass;
-    new_users.push(result);
-    jsonfile.writeFileSync(userlist, new_users);
-    const html = Mustache.render(recover_mail_template, {new_pass: new_pass});
-    emailClient.sendEmail({
-      "From": "info@mustafaarikan.net",
-      "To": result.email,
-      "Subject": "Your new password",
-      "HtmlBody": html
-    });
-  }
-  const response = {
-    "error": false
-  }
-  res.send(response);
+
+    if (result) {
+        const newUsers = users.filter((user) => {
+            return user.email !== req.body.email;
+        });
+        const newPass = makeid();
+        result.password = newPass;
+        newUsers.push(result);
+        jsonfile.writeFileSync(userlist, newUsers);
+        const html = Mustache.render(recoverMailTemplate, { new_pass: newPass });
+        emailClient.sendEmail({
+            From: 'info@mustafaarikan.net',
+            To: result.email,
+            Subject: 'Your new password',
+            HtmlBody: html
+        });
+    }
+    const response = {
+        error: false
+    };
+    res.send(response);
 });
 
 /**
@@ -323,23 +344,21 @@ app.post(url.api + url.membership + url.forgot, function (req, res) {
       }
     }
 **/
-app.post(url.api + url.users + url.get_all, function (req, res) {
-
-  if (isExpired(req)) {
-    sessionExpiredError(res);
-  }
-  else {
-    const usersAll = jsonfile.readFileSync(userlist);
-    const users = paginate(usersAll, req.body.page_number || 1);
-    const total = usersAll.length;
-
-    const response = {
-      error: false,
-      users: users,
-      total: total
+app.post(url.api + url.users + url.get_all, (req, res) => {
+    if (isExpired(req)) {
+        sessionExpiredError(res);
     }
-    res.send(response);
-  }
+    else {
+        const usersAll = jsonfile.readFileSync(userlist);
+        const users = paginate(usersAll, req.body.page_number || 1);
+        const total = usersAll.length;
+        const response = {
+            error: false,
+            users,
+            total
+        };
+        res.send(response);
+    }
 });
 
 /**
@@ -364,33 +383,32 @@ app.post(url.api + url.users + url.get_all, function (req, res) {
       }
     }
 **/
-app.post(url.api + url.users + url.remove, function (req, res) {
-
-  if (isExpired(req)) {
-    sessionExpiredError(res);
-  }
-  else {
-    const users = jsonfile.readFileSync(userlist);
-    const new_users = users.filter(function(user){
-      return user.username !== req.body.username;
-    });
-    const user = users.find(function(user){
-      return user.username === req.body.username;
-    });
-    const html = Mustache.render(removed_mail_template);
-    jsonfile.writeFileSync(userlist, new_users);
-    emailClient.sendEmail({
-      "From": "info@mustafaarikan.net",
-      "To": user.email,
-      "Subject": "Account Removed",
-      "HtmlBody": html
-    });
-    const response = {
-      error: false,
-      users: new_users
+app.post(url.api + url.users + url.remove, (req, res) => {
+    if (isExpired(req)) {
+        sessionExpiredError(res);
     }
-    res.send(response);
-  }
+    else {
+        const users = jsonfile.readFileSync(userlist);
+        const newUsers = users.filter((u) => {
+            return u.username !== req.body.username;
+        });
+        const user = users.find((u) => {
+            return u.username === req.body.username;
+        });
+        const html = Mustache.render(removedMailTemplate);
+        jsonfile.writeFileSync(userlist, newUsers);
+        emailClient.sendEmail({
+            From: 'info@mustafaarikan.net',
+            To: user.email,
+            Subject: 'Account Removed',
+            HtmlBody: html
+        });
+        const response = {
+            error: false,
+            users: newUsers
+        };
+        res.send(response);
+    }
 });
 
 /**
@@ -405,7 +423,9 @@ app.post(url.api + url.users + url.remove, function (req, res) {
   /* Response:
     {
       error: false,
-      logins: [{"app_token":"5c17b65204d2940eec456ceaac18d9c9ed890079","login_token":"1b0550321556e711620eb6f08e1de1bf464859c3108441f4060bb0fa978b4409","username":"admin","login_time":1499450554300,"expire_time":1499454154300}]
+      logins: [{"app_token":"5c17b65204d2940eec456ceaac18d9c9ed890079","login_token":
+      "1b0550321556e711620eb6f08e1de1bf464859c3108441f4060bb0fa978b4409","username":"admin","login_time":1499450554300,
+      "expire_time":1499454154300}]
     }
 
     {
@@ -415,54 +435,23 @@ app.post(url.api + url.users + url.remove, function (req, res) {
       }
     }
 **/
-app.post(url.api + url.users + url.detail, function (req, res) {
-
-  if (isExpired(req)) {
-    sessionExpiredError(res);
-  }
-  else {
-    const tokens = jsonfile.readFileSync(tokenlist);
-    const logins = tokens.filter(function(token){
-      return token.username === req.body.username;
-    });
-
-    const response = {
-      error: false,
-      logins: logins
+app.post(url.api + url.users + url.detail, (req, res) => {
+    if (isExpired(req)) {
+        sessionExpiredError(res);
     }
-    res.send(response);
-  }
+    else {
+        const tokens = jsonfile.readFileSync(tokenlist);
+        const logins = tokens.filter((token) => {
+            return token.username === req.body.username;
+        });
+        const response = {
+            error: false,
+            logins
+        };
+        res.send(response);
+    }
 });
 
-/**
-  /* Check if login token is expired or not.
-**/
-function isExpired (req) {
-    const tokens = jsonfile.readFileSync(tokenlist);
-    const users = jsonfile.readFileSync(userlist);
-    var _date = new Date();
-    var expired = true;
-    const result = tokens.find(function(token) {
-      return token.login_token === req.body.login_token && _date.getTime() < token.expire_time;
-    });
-
-    if (result) {
-      expired = false;
-    }
-
-    return expired;
-};
-function sessionExpiredError (res) {
-  const response = {
-    "error": {
-      "code": 403,
-      "message": "Session Expired"
-    }
-  }
-  res.status(response.error.code);
-  res.send(response);
-}
-
-app.listen(portNumber, function () {
-  console.log('Express api listening on port ' + portNumber )
-})
+app.listen(portNumber, () => {
+    console.log(`Express api listening on port: ${portNumber}`); // eslint-disable-line no-console
+});

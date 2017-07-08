@@ -1,2 +1,2 @@
 module.exports =
-"<p>Your account has been <b>removed</b> from the system.</p>";
+'<p>Your account has been <b>removed</b> from the system.</p>';
