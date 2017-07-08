@@ -56,6 +56,15 @@ function makeid() {
   return text;
 }
 
+/** Basic pagination function
+
+*/
+function paginate (array, page_number) {
+  const page_size = 5;
+  --page_number;
+  return array.slice(page_number * page_size, (page_number + 1) * page_size);
+}
+
 /**
   /* Save a token to the tokenlist, login
   /* Url: http://localhost:3001/api/membership/login
@@ -298,11 +307,13 @@ app.post(url.api + url.membership + url.forgot, function (req, res) {
   /* Request:
     {
       login_token: "94f9c3a3466bc89e384b41d41e37c103beaed02709e55b330b1a0499c852692e" // Required
+      page_number: 3 // Optional, default 1
     }
   /* Response:
     {
       error: false,
-      "users": [{"username":"admin","email":"admin@example.com","password":"123"},{"username":"guest","email":"guest@domain.com","password":"guest123"}]
+      "users": [{"username":"admin","email":"admin@example.com","password":"123"},{"username":"guest","email":"guest@domain.com","password":"guest123"}],
+      "total": 20
     }
 
     {
@@ -318,10 +329,14 @@ app.post(url.api + url.users + url.get_all, function (req, res) {
     sessionExpiredError(res);
   }
   else {
-    const users = jsonfile.readFileSync(userlist);
+    const usersAll = jsonfile.readFileSync(userlist);
+    const users = paginate(usersAll, req.body.page_number || 1);
+    const total = usersAll.length;
+
     const response = {
       error: false,
-      users: users
+      users: users,
+      total: total
     }
     res.send(response);
   }

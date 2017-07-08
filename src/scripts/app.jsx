@@ -47,6 +47,7 @@ class App extends Component {
                   <Router>
                     <Switch>
                       <Route exact path="/" component={UserListContainer} />
+                      <Route exact path="/user/list/:pageNo" component={UserListContainer} />
                       <Route exact path="/user/detail/:userName" component={UserDetailContainer} />
                       <Route exact path="/user/add/" component={RegisterContainer} />
                       <Route path="*" component={NotFoundComponent} />

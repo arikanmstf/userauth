@@ -8,7 +8,7 @@ import startedRequest from '../../../common/actions/StartedRequest';
 export function resolvedGetAllUsers (response) {
     return {
         type: 'RESOLVED_GET_ALL_USERS',
-        data: response.data.users
+        data: response.data
     };
 }
 export function errorGetAllUsers (response) {
@@ -17,10 +17,11 @@ export function errorGetAllUsers (response) {
         data: response
     };
 }
-export function getAllUsers () {
+export function getAllUsers (form) {
     return (dispatch) => {
         dispatch(startedRequest());
         axios.post(API.getAllUsers, qs.stringify({
+            ...form,
             login_token: getLoginToken()
         }))
         .then((response) => {

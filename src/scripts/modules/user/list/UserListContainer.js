@@ -18,7 +18,8 @@ const mapDispatchToProps = (dispatch) => {
 };
 const mapStateToProps = (state) => {
     return {
-        userList: state.userList
+        userList: state.userList.users,
+        totalUserList: state.userList.total
     };
 };
 

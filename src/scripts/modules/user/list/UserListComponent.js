@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import PaginationComponent from '../../common/pagination/PaginationComponent';
 
 class UserListComponent extends Component {
-
+    constructor (props) {
+        super(props);
+        this.state = {
+            pageNo: props.match.params.pageNo
+        };
+    }
     componentDidMount () {
-        this.props.getAllUsers();
+        this.props.getAllUsers({ page_number: this.state.pageNo });
     }
     removeUser (username) {
         this.props.openConfirmModal({
@@ -39,12 +45,21 @@ class UserListComponent extends Component {
             );
         });
     }
+    onLiClick () {
+        this.setState({ pageNo: parseInt(this.props.match.params.pageNo, 10) });
+    }
 
     render () {
         return (
         <div className="user-list-component">
           <h1>User List:</h1>
           <div className="table-responsive">
+            <PaginationComponent
+              pageNo={this.props.match.params.pageNo || 1}
+              total={this.props.totalUserList}
+              onLiClick={this.onLiClick}
+              linkTo="user/list"
+            />
             <table className="table table-hover user-list-table">
               <thead>
                 <tr>
@@ -66,7 +81,8 @@ class UserListComponent extends Component {
 }
 UserListComponent.propTypes = {
     getAllUsers: PropTypes.func.isRequired,
-    userList: PropTypes.arrayOf(Object).isRequired
+    userList: PropTypes.arrayOf(Object).isRequired,
+    totalUserList: PropTypes.number.isRequired
 };
 
 export default UserListComponent;
