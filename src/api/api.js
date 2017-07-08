@@ -7,6 +7,7 @@ const Mustache = require('mustache');
 const homedir = './src/api';
 const validation_mail_template = require( './mail_templates/validation_mail_template.js');
 const removed_mail_template = require( './mail_templates/removed_mail_template.js');
+const recover_mail_template = require( './mail_templates/recover_mail_template.js');
 
 const app = express();
 const TOKEN_PREFIX = 'hXDrV!a@aG$hH5$';
@@ -22,6 +23,7 @@ const url = {
   login: '/login',
   register: '/register',
   validate: '/validate',
+  forgot: '/forgot',
   users: '/users',
   detail: '/detail',
   get_all: '/get_all',
@@ -39,6 +41,20 @@ const allowCrossDomain = function (req, res, next) {
 app.use(allowCrossDomain);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+/** Generate random string
+ /* https://stackoverflow.com/a/1349426/5669415
+
+*/
+function makeid() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < 10; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}
 
 /**
   /* Save a token to the tokenlist, login
@@ -230,6 +246,49 @@ app.post(url.api + url.membership + url.validate, function (req, res) {
     res.status(response.error.code);
     res.send(response);
   }
+});
+
+
+/**
+  /* Recover password
+  /* Url: http://localhost:3001/api/membership/forgot
+  /* Method: POST
+  /* Request:
+    {
+      email: "test@example.com" // Required
+    }
+  /* Response:
+    {
+      error: false
+    }
+**/
+app.post(url.api + url.membership + url.forgot, function (req, res) {
+
+  const users = jsonfile.readFileSync(userlist);
+  const result = users.find(function(user) {
+    return user.email === req.body.email;
+  });
+
+  if (result) {
+    const new_users = users.filter(function(user){
+      return user.email !== req.body.email;
+    });
+    const new_pass = makeid();
+    result.password = new_pass;
+    new_users.push(result);
+    jsonfile.writeFileSync(userlist, new_users);
+    const html = Mustache.render(recover_mail_template, {new_pass: new_pass});
+    emailClient.sendEmail({
+      "From": "info@mustafaarikan.net",
+      "To": result.email,
+      "Subject": "Your new password",
+      "HtmlBody": html
+    });
+  }
+  const response = {
+    "error": false
+  }
+  res.send(response);
 });
 
 /**

@@ -28,7 +28,7 @@ export function submitForgotForm (form) {
             }))
             .then(() => {
                 dispatch(resolvedSubmitForgotForm());
-                dispatch(openModal('Your new password has been sent your email address'));
+                dispatch(openModal('Your new password has been sent your email address if you registered before.'));
             })
             .catch((message) => {
                 message = createErrorMessage(message);
