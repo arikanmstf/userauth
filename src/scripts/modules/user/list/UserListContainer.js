@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import UserListComponent from './UserListComponent';
 import { getAllUsers, removeUser } from './UserListActions';
+import { openConfirmModal } from '../../common/modal/ModalActions';
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -9,6 +10,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         removeUser: (username) => {
             dispatch(removeUser(username));
+        },
+        openConfirmModal: (config) => {
+            dispatch(openConfirmModal(config));
         }
     };
 };

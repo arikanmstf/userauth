@@ -1,6 +1,6 @@
 const initialState = '';
 
-const ModalReducer = (state = initialState, action) => {
+export const ModalReducer = (state = initialState, action) => {
     switch (action.type) {
     case 'RESOLVED_OPEN_MODAL':
         return action.data;
@@ -10,5 +10,11 @@ const ModalReducer = (state = initialState, action) => {
         return state;
     }
 };
-
-export default ModalReducer;
+export const ModalConfirmReducer = (state = null, action) => {
+    switch (action.type) {
+    case 'RESOLVED_OPEN_CONFIRM_MODAL':
+        return action.data;
+    default:
+        return state;
+    }
+};

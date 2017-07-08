@@ -8,7 +8,12 @@ class UserListComponent extends Component {
         this.props.getAllUsers();
     }
     removeUser (username) {
-        this.props.removeUser(username);
+        this.props.openConfirmModal({
+            message: 'Are you sure you want to remove this user ?',
+            onConfirm: () => {
+                this.props.removeUser(username);
+            }
+        });
     }
     renderUserList () {
         const userlist = this.props.userList;

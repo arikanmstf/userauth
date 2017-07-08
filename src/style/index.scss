@@ -9,9 +9,6 @@ body {
   max-width: $containerMaxWidth;
   margin: 0 auto;
   background-color: $containerBackgroundColor;
-  .alert {
-    padding: 8px;
-  }
 
   .login-component {
     margin: 0 auto;
@@ -51,10 +48,9 @@ body {
 
 .modal-component {
     position: fixed;
-    background: #000000;
+    background: rgba(0, 0, 0, 0.5);
     width: 100%;
     height: 100%;
-    opacity: .5;
     z-index: 101;
 
     .modal-popup {
@@ -64,7 +60,12 @@ body {
       border-radius: 10px;
       padding: 20px;
       color: #000000;
-      opacity: 1;
       z-index: 11;
     }
   }
+.alert {
+  padding: 8px;
+}
+.right {
+  float: right;
+}
