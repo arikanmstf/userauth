@@ -52,9 +52,7 @@ export const validateUserName = (username) => {
     if (username && username.length >= MIN_USERNAME_LENGTH) {
         return false;
     }
-    else {
-        return ErrorMessages.USERNAME_TOO_SHORT;
-    };
+    return ErrorMessages.USERNAME_TOO_SHORT;
 };
 export const createErrorMessage = (message) => {
     console.error(message);

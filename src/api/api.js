@@ -103,6 +103,13 @@ function validatePassword (password, passwordAgain) {
     else if (password.length < config.MIN_PASSWORD_LENGTH) return ErrorMessages.PASSWORD_TOO_SHORT;
     return false;
 };
+/* Validate username */
+function validateUserName (username) {
+    if (username && username.length >= config.MIN_USERNAME_LENGTH) {
+        return false;
+    }
+    return ErrorMessages.USERNAME_TOO_SHORT;
+};
 
 /**
   /* Save a token to the tokenlist, login
@@ -216,6 +223,7 @@ app.post(url.api + url.membership + url.register, (req, res) => {
         return user.email === req.body.email || user.username === req.body.username;
     });
     const validatePwError = validatePassword(req.body.password, req.body.password_again);
+    const validateUserNameError = validateUserName(req.body.username);
 
     if(!isValidEmail(req.body.email)) {
         const response = {
@@ -233,6 +241,17 @@ app.post(url.api + url.membership + url.register, (req, res) => {
             error: {
                 code: 403,
                 message: validatePwError
+            }
+        };
+        res.status(response.error.code);
+        res.send(response);
+        return true;
+    }
+    else if (validateUserNameError) {
+        const response = {
+            error: {
+                code: 403,
+                message: validateUserNameError
             }
         };
         res.status(response.error.code);
