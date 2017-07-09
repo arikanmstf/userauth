@@ -102,14 +102,14 @@ function validatePassword (password, passwordAgain) {
     if (password !== passwordAgain) return ErrorMessages.PASSWORD_NOT_MATCH;
     else if (password.length < config.MIN_PASSWORD_LENGTH) return ErrorMessages.PASSWORD_TOO_SHORT;
     return false;
-};
+}
 /* Validate username */
 function validateUserName (username) {
     if (username && username.length >= config.MIN_USERNAME_LENGTH) {
         return false;
     }
     return ErrorMessages.USERNAME_TOO_SHORT;
-};
+}
 
 /**
   /* Save a token to the tokenlist, login
@@ -192,6 +192,7 @@ app.post(url.api + url.membership + url.login, (req, res) => {
         res.status(response.error.code);
         res.send(response);
     }
+    return true;
 });
 
 /**
@@ -225,7 +226,7 @@ app.post(url.api + url.membership + url.register, (req, res) => {
     const validatePwError = validatePassword(req.body.password, req.body.password_again);
     const validateUserNameError = validateUserName(req.body.username);
 
-    if(!isValidEmail(req.body.email)) {
+    if (!isValidEmail(req.body.email)) {
         const response = {
             error: {
                 code: 403,
@@ -295,6 +296,7 @@ app.post(url.api + url.membership + url.register, (req, res) => {
         res.status(response.error.code);
         res.send(response);
     }
+    return true;
 });
 
 /**
@@ -397,6 +399,7 @@ app.post(url.api + url.membership + url.forgot, (req, res) => {
         error: false
     };
     res.send(response);
+    return true;
 });
 
 /**
@@ -447,6 +450,7 @@ app.post(url.api + url.users + url.get_all, (req, res) => {
     {
       username: "guest", // Required
       login_token: "94f9c3a3466bc89e384b41d41e37c103beaed02709e55b330b1a0499c852692e" // Required
+      page_number: 3 // Optional, default 1
 
     }
   /* Response:
@@ -503,7 +507,6 @@ app.post(url.api + url.users + url.remove, (req, res) => {
             res.status(response.error.code);
             res.send(response);
         }
-
     }
 });
 
