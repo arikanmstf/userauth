@@ -21,6 +21,7 @@ module.exports = {
         MAIL_SENT_FOR_REGISTER: 'A confirmation mail has ben sent. Please check and confirm your registration.',
         INVALID_ACCOUNT: 'Your account is invalid, please validate your email.',
         USERNAME_TOO_SHORT: 'Your username is too short, should be 3 chars min.',
+        USER_NOTFOUND: 'Requested user not found.',
         SESSION_EXP: 'Session Expired',
         EMAIL_PW: 'Email or password wrong',
         UN_EXISTS: 'Username or email already exists',

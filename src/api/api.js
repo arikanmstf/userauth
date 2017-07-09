@@ -14,7 +14,7 @@ const app = express();
 const TOKEN_PREFIX = 'hXDrV!a@aG$hH5$';
 const userlist = `${homedir}/database/userlist.json`;
 const tokenlist = `${homedir}/database/tokenlist.json`;
-const sessionExpireTime = 60 * 60 * 1000; // 1 hour
+const sessionExpireTime = 6 * 60 * 60 * 1000; // 6 hours
 const emailClient = new postmark.Client('9f522760-eca6-404c-a94b-940355256301');
 const ErrorMessages = config.ErrorMessages;
 const EMAIL_REGEX = config.EMAIL_REGEX;
@@ -52,7 +52,7 @@ function makeid () {
     let text = '';
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-    for (let i = 0; i < 10; i += 1) {
+    for (let i = 0; i < config.MIN_PASSWORD_LENGTH; i += 1) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
@@ -473,19 +473,32 @@ app.post(url.api + url.users + url.remove, (req, res) => {
         const user = users.find((u) => {
             return u.username === req.body.username;
         });
-        const html = Mustache.render(removedMailTemplate);
-        jsonfile.writeFileSync(userlist, newUsers);
-        emailClient.sendEmail({
-            From: 'info@mustafaarikan.net',
-            To: user.email,
-            Subject: 'Account Removed',
-            HtmlBody: html
-        });
-        const response = {
-            error: false,
-            users: newUsers
-        };
-        res.send(response);
+        if (user) {
+            const html = Mustache.render(removedMailTemplate);
+            jsonfile.writeFileSync(userlist, newUsers);
+            emailClient.sendEmail({
+                From: 'info@mustafaarikan.net',
+                To: user.email,
+                Subject: 'Account Removed',
+                HtmlBody: html
+            });
+            const response = {
+                error: false,
+                users: newUsers
+            };
+            res.send(response);
+        }
+        else {
+            const response = {
+                error: {
+                    code: 403,
+                    message: ErrorMessages.USER_NOTFOUND
+                }
+            };
+            res.status(response.error.code);
+            res.send(response);
+        }
+
     }
 });
 
