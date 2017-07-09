@@ -38,7 +38,7 @@ export function getAllUsers (form) {
 export function resolvedRemoveUser (response) {
     return {
         type: 'RESOLVED_GET_ALL_USERS',
-        data: response.data.users
+        data: response.data
     };
 }
 export function errorRemoveUser (response) {
@@ -47,11 +47,11 @@ export function errorRemoveUser (response) {
         data: response
     };
 }
-export function removeUser (username) {
+export function removeUser (form) {
     return (dispatch) => {
         dispatch(startedRequest());
         axios.post(API.removeUser, qs.stringify({
-            username,
+            ...form,
             login_token: getLoginToken()
         }))
         .then((response) => {

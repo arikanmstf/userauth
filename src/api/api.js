@@ -33,7 +33,7 @@ const url = {
     is_expired: '/is_expired'
 };
 
-const allowCrossDomain = function (req, res, next) {
+const allowCrossDomain = (req, res, next) => {
     res.header('Access-Control-Allow-Origin', config.baseUrl);
     res.header('Access-Control-Allow-Methods', 'POST');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
@@ -447,11 +447,13 @@ app.post(url.api + url.users + url.get_all, (req, res) => {
     {
       username: "guest", // Required
       login_token: "94f9c3a3466bc89e384b41d41e37c103beaed02709e55b330b1a0499c852692e" // Required
+
     }
   /* Response:
     {
       error: false,
-      users: [{"username":"admin","email":"admin@example.com","password":"123"}]
+      users: [{"username":"admin","email":"admin@example.com","password":"123"}],
+      total: 20
     }
 
     {
@@ -467,15 +469,17 @@ app.post(url.api + url.users + url.remove, (req, res) => {
     }
     else {
         const users = jsonfile.readFileSync(userlist);
-        const newUsers = users.filter((u) => {
+        const newUsersAll = users.filter((u) => {
             return u.username !== req.body.username;
         });
+        const newUsers = paginate(newUsersAll, req.body.page_number || 1);
+        const total = newUsersAll.length;
         const user = users.find((u) => {
             return u.username === req.body.username;
         });
         if (user) {
             const html = Mustache.render(removedMailTemplate);
-            jsonfile.writeFileSync(userlist, newUsers);
+            jsonfile.writeFileSync(userlist, newUsersAll);
             emailClient.sendEmail({
                 From: 'info@mustafaarikan.net',
                 To: user.email,
@@ -484,7 +488,8 @@ app.post(url.api + url.users + url.remove, (req, res) => {
             });
             const response = {
                 error: false,
-                users: newUsers
+                users: newUsers,
+                total
             };
             res.send(response);
         }

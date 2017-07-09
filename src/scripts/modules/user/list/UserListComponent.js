@@ -17,7 +17,11 @@ class UserListComponent extends Component {
         this.props.openConfirmModal({
             message: 'Are you sure you want to remove this user ?',
             onConfirm: () => {
-                this.props.removeUser(username);
+                const form = {
+                    username,
+                    page_number: this.state.pageNo
+                };
+                this.props.removeUser(form);
             }
         });
     }
