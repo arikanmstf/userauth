@@ -1,7 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';
 import { API, ErrorMessages } from '../../../common/Config';
-import { checkEmail, createErrorMessage, validatePassword } from '../../../common/Helpers';
+import { checkEmail, createErrorMessage, validatePassword, validateUserName } from '../../../common/Helpers';
 import { openModal } from '../../../modules/common/modal/ModalActions';
 import startedRequest from '../../../common/actions/StartedRequest';
 
@@ -22,7 +22,8 @@ export function submitRegisterForm (form) {
     return (dispatch) => {
         if (checkEmail(form.email)) {
             const passwordNotValid = validatePassword(form.password, form.password_again);
-            if (!passwordNotValid) {
+            const userNameNotValid = validateUserName(form.username);
+            if (!passwordNotValid && !userNameNotValid) {
                 dispatch(startedRequest());
                 axios.post(API.submitRegisterForm, qs.stringify({
                     ...form
@@ -40,8 +41,8 @@ export function submitRegisterForm (form) {
                 });
             }
             else {
-                dispatch(errorSubmitRegisterForm(passwordNotValid));
-                dispatch(openModal(passwordNotValid));
+                dispatch(errorSubmitRegisterForm(passwordNotValid || userNameNotValid));
+                dispatch(openModal(passwordNotValid || userNameNotValid));
             }
         }
         else {

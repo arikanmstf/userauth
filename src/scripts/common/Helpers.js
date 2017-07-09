@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js';
 import Storage from './Storage';
-import { baseUrl, ErrorMessages, MIN_PASSWORD_LENGTH, EMAIL_REGEX } from './Config';
+import { baseUrl, ErrorMessages, MIN_PASSWORD_LENGTH, MIN_USERNAME_LENGTH, EMAIL_REGEX } from './Config';
 
 const TOKEN_PREFIX = '2kE-Ke|@22t&g@<';
 
@@ -43,9 +43,18 @@ export const checkEmail = (email) => {
     return EMAIL_REGEX.test(email);
 };
 export const validatePassword = (password, passwordAgain) => {
-    if (password !== passwordAgain) return ErrorMessages.PASSWORD_NOT_MATCH;
+    if (!password || !passwordAgain) return ErrorMessages.PASSWORD_INVALID;
+    else if (password !== passwordAgain) return ErrorMessages.PASSWORD_NOT_MATCH;
     else if (password.length < MIN_PASSWORD_LENGTH) return ErrorMessages.PASSWORD_TOO_SHORT;
     return false;
+};
+export const validateUserName = (username) => {
+    if (username && username.length >= MIN_USERNAME_LENGTH) {
+        return false;
+    }
+    else {
+        return ErrorMessages.USERNAME_TOO_SHORT;
+    };
 };
 export const createErrorMessage = (message) => {
     console.error(message);
